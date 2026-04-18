@@ -55,7 +55,7 @@ body {
 }
 
 /* Links -- the core gameplay element */
-.wiki-content a[href] {
+.wiki-content a[data-wiki-href] {
   color: #60a5fa;
   text-decoration: none;
   border-bottom: 1px solid transparent;
@@ -63,21 +63,13 @@ body {
   cursor: pointer;
 }
 
-.wiki-content a[href]:hover {
+.wiki-content a[data-wiki-href]:hover {
   color: #93c5fd;
   border-bottom-color: #93c5fd;
 }
 
-.wiki-content a[href]:active {
+.wiki-content a[data-wiki-href]:active {
   color: #bfdbfe;
-}
-
-/* Red links (articles that don't exist) */
-.wiki-content a.new,
-.wiki-content a[href*="redlink=1"] {
-  color: #6b7280;
-  pointer-events: none;
-  border-bottom: none;
 }
 
 /* Headings */
@@ -249,17 +241,11 @@ body {
 .wiki-content .toc,
 .wiki-content #toc,
 .wiki-content .ambox,
-.wiki-content .hatnote,
 .wiki-content .shortdescription,
 .wiki-content .mw-indicators,
 .wiki-content link,
 .wiki-content style,
-.wiki-content .mw-parser-output > .mw-heading:last-of-type ~ *,
-.wiki-content #See_also ~ *,
-.wiki-content #External_links ~ *,
-.wiki-content #Further_reading ~ *,
-.wiki-content #Notes ~ *,
-.wiki-content #References ~ * {
+.wiki-content .mw-parser-output > .mw-heading:last-of-type ~ * {
   display: none !important;
 }
 
@@ -268,7 +254,12 @@ body {
 .wiki-content section:has(> .mw-heading #External_links),
 .wiki-content section:has(> .mw-heading #Further_reading),
 .wiki-content section:has(> .mw-heading #Notes),
-.wiki-content section:has(> .mw-heading #References) {
+.wiki-content section:has(> .mw-heading #References),
+.wiki-content section:has(> #See_also),
+.wiki-content section:has(> #External_links),
+.wiki-content section:has(> #Further_reading),
+.wiki-content section:has(> #Notes),
+.wiki-content section:has(> #References) {
   display: none !important;
 }
 
@@ -317,6 +308,6 @@ body {
 }
 
 /* Disable context menu on links (no "open in new tab" cheating) */
-.wiki-content a[href] {
+.wiki-content a[data-wiki-href] {
   -webkit-touch-callout: none;
 }

@@ -14,7 +14,11 @@ export async function fetchArticleHtml(title: string, signal?: AbortSignal): Pro
   if (!res.ok) {
     throw new Error(`Failed to fetch article: ${res.status}`)
   }
-  return res.text()
+  let html = await res.text()
+  // Strip <base> tags -- Wikipedia sets base href to //en.wikipedia.org/wiki/
+  // which causes relative link clicks to navigate away from the app
+  html = html.replace(/<base[^>]*>/gi, '')
+  return html
 }
 
 /**

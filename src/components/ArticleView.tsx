@@ -7,6 +7,69 @@ interface ArticleViewProps {
   gameOver: boolean
 }
 
+/**
+ * Process fetched Wikipedia HTML to make links safe for in-app use:
+ * - Move href to data-wiki-href so the browser won't follow them
+ * - Keep the visual appearance of links via CSS
+ */
+function processHtml(html: string): string {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(html, 'text/html')
+
+  // Remove unwanted sections
+  const unwantedIds = ['See_also', 'External_links', 'Further_reading', 'Notes', 'References', 'Bibliography']
+  for (const id of unwantedIds) {
+    const heading = doc.getElementById(id)
+    if (heading) {
+      const section = heading.closest('section')
+      if (section) {
+        section.remove()
+      } else {
+        let node: Element | null = heading.tagName === 'H2' || heading.tagName === 'H3'
+          ? heading : heading.parentElement
+        while (node) {
+          const next = node.nextElementSibling
+          node.remove()
+          node = next
+        }
+      }
+    }
+  }
+
+  // Remove unwanted elements
+  doc.querySelectorAll(
+    '.mw-editsection, .navbox, .catlinks, .mw-authority-control, .sistersitebox, ' +
+    '.noprint, .ambox, .metadata, .mbox-small, .mw-empty-elt, .portal, .sidebar, ' +
+    '.toc, #toc, #coordinates, .mw-indicators, .shortdescription'
+  ).forEach(n => n.remove())
+
+  // Process all links: move href to data-wiki-href
+  doc.querySelectorAll('a[href]').forEach(el => {
+    const a = el as HTMLAnchorElement
+    const href = a.getAttribute('href')!
+    const articleTitle = extractArticleTitle(href)
+
+    if (articleTitle && !isMetaTitle(articleTitle)) {
+      // Valid wiki article link: make it a game link
+      a.setAttribute('data-wiki-href', href)
+      a.removeAttribute('href')
+      a.setAttribute('role', 'link')
+      a.setAttribute('tabindex', '0')
+      a.style.cursor = 'pointer'
+    } else if (href.startsWith('#')) {
+      // Anchor link within the page: keep as-is
+    } else {
+      // External or meta link: disable
+      a.removeAttribute('href')
+      a.style.color = '#6b7280'
+      a.style.cursor = 'default'
+      a.style.pointerEvents = 'none'
+    }
+  })
+
+  return doc.body.innerHTML
+}
+
 export default function ArticleView({ title, onNavigate, gameOver }: ArticleViewProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [html, setHtml] = useState<string>('')
@@ -21,7 +84,7 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
 
     fetchArticleHtml(title, controller.signal)
       .then((content) => {
-        setHtml(content)
+        setHtml(processHtml(content))
         setLoading(false)
         // Scroll to top on new article
         if (containerRef.current) {
@@ -39,49 +102,54 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
   }, [title])
 
   // Handle link clicks
+  const onNavigateRef = useRef(onNavigate)
+  onNavigateRef.current = onNavigate
+  const gameOverRef = useRef(gameOver)
+  gameOverRef.current = gameOver
+
   const handleClick = useCallback(
     (e: MouseEvent) => {
-      if (gameOver) return
-
-      const target = (e.target as HTMLElement).closest('a')
+      const target = (e.target as HTMLElement).closest('a[data-wiki-href]') as HTMLElement | null
       if (!target) return
 
       e.preventDefault()
       e.stopPropagation()
 
-      const href = target.getAttribute('href')
+      if (gameOverRef.current) return
+
+      const href = target.getAttribute('data-wiki-href')
       if (!href) return
 
       const articleTitle = extractArticleTitle(href)
       if (!articleTitle) return
-      if (isMetaTitle(articleTitle)) return
 
-      onNavigate(articleTitle)
+      onNavigateRef.current(articleTitle)
     },
-    [onNavigate, gameOver],
+    [],
   )
 
   // Block context menu on links
   const handleContextMenu = useCallback((e: MouseEvent) => {
-    const target = (e.target as HTMLElement).closest('a')
+    const target = (e.target as HTMLElement).closest('a[data-wiki-href]')
     if (target) {
       e.preventDefault()
     }
   }, [])
 
-  // Attach event listeners
+  // Attach event listeners -- depends on html/loading because the container
+  // div only exists when not loading/erroring
   useEffect(() => {
     const el = containerRef.current
     if (!el) return
 
-    el.addEventListener('click', handleClick)
-    el.addEventListener('contextmenu', handleContextMenu)
+    el.addEventListener('click', handleClick, true)
+    el.addEventListener('contextmenu', handleContextMenu, true)
 
     return () => {
-      el.removeEventListener('click', handleClick)
-      el.removeEventListener('contextmenu', handleContextMenu)
+      el.removeEventListener('click', handleClick, true)
+      el.removeEventListener('contextmenu', handleContextMenu, true)
     }
-  }, [handleClick, handleContextMenu])
+  }, [handleClick, handleContextMenu, html, loading])
 
   if (loading) {
     return (
@@ -105,7 +173,7 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
               setLoading(true)
               setError(null)
               fetchArticleHtml(title)
-                .then(setHtml)
+                .then((c) => setHtml(processHtml(c)))
                 .catch((err) => setError(err.message))
                 .finally(() => setLoading(false))
             }}
