@@ -1967,16 +1967,26 @@ export function buildShareText(
   challenge: DailyChallenge,
   hops: number,
   timeSeconds: number,
+  path?: string[],
 ): string {
-  const squares = Array(Math.min(hops, 20)).fill('\u{1f7e9}').join('')
   const time = timeSeconds < 60
     ? `${timeSeconds}s`
     : `${Math.floor(timeSeconds / 60)}m${Math.floor(timeSeconds % 60)}s`
-  return [
+  const lines = [
     `WikiGame #${challenge.challengeNumber}`,
     `${challenge.start} \u2192 ${challenge.end}`,
     `${hops} hops in ${time}`,
-    squares,
-    'jhomer192.github.io/wikigame',
-  ].join('\n')
+    '',
+  ]
+  if (path && path.length > 0) {
+    for (let i = 0; i < path.length; i++) {
+      const isLast = i === path.length - 1
+      lines.push(`${isLast ? '\u{1f7e2}' : '\u{1f7e9}'} ${path[i]}`)
+    }
+  } else {
+    lines.push(Array(Math.min(hops, 20)).fill('\u{1f7e9}').join(''))
+  }
+  lines.push('')
+  lines.push('jhomer192.github.io/wikigame')
+  return lines.join('\n')
 }
