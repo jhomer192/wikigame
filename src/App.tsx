@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import { getDailyChallenge, getRandomChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
 import { titlesMatch } from './lib/wiki'
 import type { DailyChallenge } from './lib/daily'
@@ -27,9 +27,6 @@ export default function App() {
   const dailyChallenge = getDailyChallenge()
   const dailyResult = getSavedResult(todayLocal())
   const dailyCompleted = !!dailyResult?.completed
-  const sessionRef = useRef(session)
-  sessionRef.current = session
-
   const startGame = useCallback((start: string, end: string, isDaily: boolean, challenge: DailyChallenge | null) => {
     const newSession: GameSession = {
       startArticle: start,

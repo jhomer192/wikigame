@@ -76,17 +76,21 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // Fetch article HTML
-  useEffect(() => {
-    const controller = new AbortController()
+  // Reset state when title changes, then fetch
+  const [fetchTitle, setFetchTitle] = useState(title)
+  if (fetchTitle !== title) {
+    setFetchTitle(title)
     setLoading(true)
     setError(null)
+  }
+
+  useEffect(() => {
+    const controller = new AbortController()
 
     fetchArticleHtml(title, controller.signal)
       .then((content) => {
         setHtml(processHtml(content))
         setLoading(false)
-        // Scroll to top on new article
         if (containerRef.current) {
           containerRef.current.scrollTop = 0
         }
@@ -103,9 +107,12 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
 
   // Handle link clicks
   const onNavigateRef = useRef(onNavigate)
-  onNavigateRef.current = onNavigate
   const gameOverRef = useRef(gameOver)
-  gameOverRef.current = gameOver
+
+  useEffect(() => {
+    onNavigateRef.current = onNavigate
+    gameOverRef.current = gameOver
+  })
 
   const handleClick = useCallback(
     (e: MouseEvent) => {
