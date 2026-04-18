@@ -1,0 +1,313 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #0f1117;
+  --color-bg-card: #1a1b23;
+  --color-bg-hover: #252630;
+  --color-border: #2e303a;
+  --color-text: #9ca3af;
+  --color-text-bright: #f3f4f6;
+  --color-accent: #60a5fa;
+  --color-accent-dim: #3b82f6;
+  --color-success: #34d399;
+  --color-warning: #fbbf24;
+  --color-danger: #f87171;
+}
+
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Prevent pull-to-refresh on mobile */
+body {
+  overscroll-behavior: none;
+}
+
+/* ============================================================
+   Wikipedia article dark-theme overrides
+   Applied inside .wiki-content container
+   ============================================================ */
+
+.wiki-content {
+  color: #d1d5db;
+  font-size: 15px;
+  line-height: 1.6;
+  text-align: left;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.wiki-content * {
+  max-width: 100% !important;
+  box-sizing: border-box;
+}
+
+/* Links -- the core gameplay element */
+.wiki-content a[data-wiki-href] {
+  color: #60a5fa;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s, color 0.15s;
+  cursor: pointer;
+}
+
+.wiki-content a[data-wiki-href]:hover {
+  color: #93c5fd;
+  border-bottom-color: #93c5fd;
+}
+
+.wiki-content a[data-wiki-href]:active {
+  color: #bfdbfe;
+}
+
+/* Headings */
+.wiki-content h1, .wiki-content h2, .wiki-content h3,
+.wiki-content h4, .wiki-content h5, .wiki-content h6 {
+  color: #f3f4f6;
+  margin-top: 1.2em;
+  margin-bottom: 0.4em;
+  font-weight: 600;
+  border-bottom: 1px solid #2e303a;
+  padding-bottom: 0.3em;
+}
+
+.wiki-content h1 { font-size: 1.6em; }
+.wiki-content h2 { font-size: 1.35em; }
+.wiki-content h3 { font-size: 1.15em; }
+.wiki-content h4 { font-size: 1.05em; }
+
+/* Paragraphs */
+.wiki-content p {
+  margin: 0.6em 0;
+}
+
+/* Lists */
+.wiki-content ul, .wiki-content ol {
+  padding-left: 1.5em;
+  margin: 0.4em 0;
+}
+
+.wiki-content li {
+  margin: 0.2em 0;
+}
+
+/* Tables */
+.wiki-content table {
+  border-collapse: collapse;
+  margin: 0.8em 0;
+  font-size: 0.9em;
+  width: auto !important;
+}
+
+.wiki-content table th,
+.wiki-content table td {
+  border: 1px solid #374151;
+  padding: 6px 10px;
+}
+
+.wiki-content table th {
+  background: #1f2937;
+  color: #e5e7eb;
+  font-weight: 600;
+}
+
+.wiki-content table td {
+  background: #111827;
+}
+
+.wiki-content table tr:nth-child(even) td {
+  background: #1a1f2e;
+}
+
+/* Infobox */
+.wiki-content .infobox,
+.wiki-content table.infobox {
+  background: #1a1b23 !important;
+  border: 1px solid #374151 !important;
+  border-radius: 8px;
+  float: right;
+  clear: right;
+  margin: 0 0 1em 1em;
+  width: min(300px, 45%) !important;
+  font-size: 0.85em;
+}
+
+.wiki-content .infobox th,
+.wiki-content .infobox td {
+  background: transparent !important;
+  border-color: #2e303a !important;
+  padding: 4px 8px;
+}
+
+.wiki-content .infobox caption,
+.wiki-content .infobox .infobox-title,
+.wiki-content .infobox .fn {
+  color: #f3f4f6 !important;
+  font-weight: 700;
+  font-size: 1.1em;
+  padding: 8px;
+}
+
+/* Images */
+.wiki-content img {
+  border-radius: 4px;
+  height: auto;
+}
+
+.wiki-content figure,
+.wiki-content .thumb,
+.wiki-content .tmulti {
+  margin: 0.5em 0;
+  background: #1a1b23;
+  border: 1px solid #2e303a;
+  border-radius: 6px;
+  padding: 6px;
+  overflow: hidden;
+}
+
+.wiki-content .thumb.tright,
+.wiki-content figure.mw-halign-right {
+  float: right;
+  clear: right;
+  margin: 0 0 0.8em 1em;
+}
+
+.wiki-content .thumb.tleft,
+.wiki-content figure.mw-halign-left {
+  float: left;
+  clear: left;
+  margin: 0 1em 0.8em 0;
+}
+
+.wiki-content figcaption,
+.wiki-content .thumbcaption {
+  color: #9ca3af;
+  font-size: 0.85em;
+  padding: 4px 2px 0;
+  line-height: 1.4;
+}
+
+/* Blockquotes */
+.wiki-content blockquote {
+  border-left: 3px solid #374151;
+  margin: 0.8em 0;
+  padding: 0.4em 1em;
+  color: #9ca3af;
+}
+
+/* Code */
+.wiki-content code, .wiki-content pre {
+  background: #1f2028;
+  border-radius: 4px;
+  font-size: 0.9em;
+  padding: 2px 6px;
+}
+
+.wiki-content pre {
+  padding: 12px;
+  overflow-x: auto;
+}
+
+/* Category links, navboxes, etc -- hide */
+.wiki-content .navbox,
+.wiki-content .catlinks,
+.wiki-content .mw-authority-control,
+.wiki-content .sistersitebox,
+.wiki-content .noprint,
+.wiki-content .mw-editsection,
+.wiki-content .mw-empty-elt,
+.wiki-content .reference,
+.wiki-content sup.reference,
+.wiki-content .reflist,
+.wiki-content .references,
+.wiki-content .refbegin,
+.wiki-content #coordinates,
+.wiki-content .metadata,
+.wiki-content .mbox-small,
+.wiki-content .portal,
+.wiki-content .sidebar,
+.wiki-content .toc,
+.wiki-content #toc,
+.wiki-content .ambox,
+.wiki-content .shortdescription,
+.wiki-content .mw-indicators,
+.wiki-content link,
+.wiki-content style,
+.wiki-content .mw-parser-output > .mw-heading:last-of-type ~ * {
+  display: none !important;
+}
+
+/* Hide sections we don't want: See also, References, External links, Notes, Further reading */
+.wiki-content section:has(> .mw-heading #See_also),
+.wiki-content section:has(> .mw-heading #External_links),
+.wiki-content section:has(> .mw-heading #Further_reading),
+.wiki-content section:has(> .mw-heading #Notes),
+.wiki-content section:has(> .mw-heading #References),
+.wiki-content section:has(> #See_also),
+.wiki-content section:has(> #External_links),
+.wiki-content section:has(> #Further_reading),
+.wiki-content section:has(> #Notes),
+.wiki-content section:has(> #References) {
+  display: none !important;
+}
+
+/* Hatnotes (disambiguation links at top) - show them but subtle */
+.wiki-content .hatnote {
+  display: block !important;
+  color: #6b7280;
+  font-style: italic;
+  font-size: 0.9em;
+  margin-bottom: 0.5em;
+}
+
+/* Math formulas */
+.wiki-content math, .wiki-content .mwe-math-element {
+  color: #d1d5db;
+}
+
+.wiki-content .mwe-math-element img {
+  filter: invert(0.85);
+}
+
+/* Mobile: make images not float on small screens */
+@media (max-width: 640px) {
+  .wiki-content .thumb.tright,
+  .wiki-content .thumb.tleft,
+  .wiki-content figure.mw-halign-right,
+  .wiki-content figure.mw-halign-left,
+  .wiki-content .infobox,
+  .wiki-content table.infobox {
+    float: none !important;
+    margin: 0.5em auto !important;
+    width: 100% !important;
+  }
+}
+
+/* Scrollbar dark theme */
+.wiki-content::-webkit-scrollbar {
+  width: 6px;
+}
+.wiki-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+.wiki-content::-webkit-scrollbar-thumb {
+  background: #374151;
+  border-radius: 3px;
+}
+
+/* Disable context menu on links (no "open in new tab" cheating) */
+.wiki-content a[data-wiki-href] {
+  -webkit-touch-callout: none;
+}

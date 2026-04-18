@@ -1,0 +1,156 @@
+import type { DailyChallenge } from '../lib/daily'
+import { buildShareText } from '../lib/daily'
+
+interface ResultsScreenProps {
+  challenge: DailyChallenge | null
+  path: string[]
+  hops: number
+  timeSeconds: number
+  isDaily: boolean
+  onPlayAgain: () => void
+  onPlayDaily: () => void
+  dailyCompleted: boolean
+}
+
+function formatTime(seconds: number): string {
+  if (seconds < 60) return `${seconds}s`
+  return `${Math.floor(seconds / 60)}m ${seconds % 60}s`
+}
+
+function getDifficultyColor(d: string): string {
+  switch (d) {
+    case 'easy': return 'text-success'
+    case 'medium': return 'text-warning'
+    case 'hard': return 'text-danger'
+    default: return 'text-text'
+  }
+}
+
+export default function ResultsScreen({
+  challenge,
+  path,
+  hops,
+  timeSeconds,
+  isDaily,
+  onPlayAgain,
+  onPlayDaily,
+  dailyCompleted,
+}: ResultsScreenProps) {
+  const handleShare = async () => {
+    if (!challenge) return
+    const text = buildShareText(challenge, hops, timeSeconds)
+    try {
+      if (navigator.share) {
+        await navigator.share({ text })
+      } else {
+        await navigator.clipboard.writeText(text)
+        // Show brief feedback
+        const btn = document.getElementById('share-btn')
+        if (btn) {
+          btn.textContent = 'Copied!'
+          setTimeout(() => { btn.textContent = 'Share Results' }, 2000)
+        }
+      }
+    } catch {
+      // User cancelled share
+    }
+  }
+
+  return (
+    <div className="flex-1 overflow-y-auto flex items-start justify-center p-4 pt-8">
+      <div className="w-full max-w-md">
+        {/* Victory header */}
+        <div className="text-center mb-6">
+          <div className="text-4xl mb-2">&#x1F389;</div>
+          <h2 className="text-2xl font-bold text-text-bright mb-1">You made it!</h2>
+          {challenge && (
+            <div className="text-sm text-text/60">
+              {isDaily ? `WikiGame #${challenge.challengeNumber}` : 'Random Challenge'}
+              {' \u00B7 '}
+              <span className={getDifficultyColor(challenge.difficulty)}>
+                {challenge.difficulty}
+              </span>
+            </div>
+          )}
+        </div>
+
+        {/* Stats grid */}
+        <div className="grid grid-cols-2 gap-3 mb-6">
+          <div className="bg-bg-card rounded-xl p-4 text-center border border-border">
+            <div className="text-3xl font-bold font-mono text-text-bright">{hops}</div>
+            <div className="text-xs text-text/60 mt-1">Hops</div>
+          </div>
+          <div className="bg-bg-card rounded-xl p-4 text-center border border-border">
+            <div className="text-3xl font-bold font-mono text-text-bright">{formatTime(timeSeconds)}</div>
+            <div className="text-xs text-text/60 mt-1">Time</div>
+          </div>
+        </div>
+
+        {/* Path taken */}
+        <div className="bg-bg-card rounded-xl p-4 border border-border mb-6">
+          <h3 className="text-sm font-semibold text-text-bright mb-3">Your path</h3>
+          <div className="space-y-0">
+            {path.map((title, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <div className="flex flex-col items-center">
+                  <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${
+                    i === 0 ? 'bg-accent' : i === path.length - 1 ? 'bg-success' : 'bg-border'
+                  }`} />
+                  {i < path.length - 1 && (
+                    <div className="w-px h-5 bg-border" />
+                  )}
+                </div>
+                <div className={`text-sm pb-1 ${
+                  i === 0 || i === path.length - 1 ? 'text-text-bright font-medium' : 'text-text'
+                }`}>
+                  {title}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Action buttons */}
+        <div className="space-y-3">
+          {isDaily && (
+            <button
+              id="share-btn"
+              onClick={handleShare}
+              className="w-full py-3 rounded-xl bg-accent text-white font-semibold hover:bg-accent-dim transition-colors"
+            >
+              Share Results
+            </button>
+          )}
+
+          <button
+            onClick={onPlayAgain}
+            className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:bg-bg-hover transition-colors"
+          >
+            Play Random
+          </button>
+
+          {!isDaily && !dailyCompleted && (
+            <button
+              onClick={onPlayDaily}
+              className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:bg-bg-hover transition-colors"
+            >
+              Play Today's Challenge
+            </button>
+          )}
+        </div>
+
+        {/* Wikipedia credit */}
+        <div className="text-center mt-6 mb-4">
+          <a
+            href="https://donate.wikimedia.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs text-success/80 hover:text-success transition-colors"
+          >
+            Content from Wikipedia. Please consider donating.
+          </a>
+        </div>
+      </div>
+    </div>
+  )
+}
