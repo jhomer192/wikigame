@@ -113,6 +113,18 @@ export default function App() {
     startGame(c.start, c.end, true, c)
   }, [startGame])
 
+  const handleGiveUp = useCallback(() => {
+    if (!session) return
+    const elapsed = Math.floor((Date.now() - session.startTime) / 1000)
+    setFinalTime(elapsed)
+    setGameState('results')
+  }, [session])
+
+  const handleQuit = useCallback(() => {
+    setSession(null)
+    setGameState('start')
+  }, [])
+
   const handleBackToStart = useCallback(() => {
     setSession(null)
     setGameState('start')
@@ -179,6 +191,8 @@ export default function App() {
           gameOver={gameOver}
           onBack={handleBack}
           canGoBack={session.history.length > 0}
+          onGiveUp={handleGiveUp}
+          onQuit={handleQuit}
         />
         <ArticleView
           title={session.currentArticle}

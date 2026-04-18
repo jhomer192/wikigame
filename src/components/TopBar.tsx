@@ -8,6 +8,8 @@ interface TopBarProps {
   gameOver: boolean
   onBack: () => void
   canGoBack: boolean
+  onGiveUp: () => void
+  onQuit: () => void
 }
 
 function formatTime(seconds: number): string {
@@ -24,6 +26,8 @@ export default function TopBar({
   gameOver,
   onBack,
   canGoBack,
+  onGiveUp,
+  onQuit,
 }: TopBarProps) {
   const [elapsed, setElapsed] = useState(0)
 
@@ -43,14 +47,28 @@ export default function TopBar({
           <span className="text-lg font-bold text-text-bright tracking-tight">WikiGame</span>
           <span className="text-xs text-text/60 hidden sm:inline">Daily Wikipedia Racing</span>
         </div>
-        <a
-          href="https://donate.wikimedia.org"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs px-2.5 py-1 rounded-full bg-success/15 text-success hover:bg-success/25 transition-colors font-medium"
-        >
-          Donate to Wikipedia
-        </a>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onGiveUp}
+            className="text-xs px-2.5 py-1 rounded-full bg-danger/15 text-danger hover:bg-danger/25 transition-colors font-medium"
+          >
+            Give Up
+          </button>
+          <button
+            onClick={onQuit}
+            className="text-xs px-2.5 py-1 rounded-full bg-text/10 text-text/60 hover:bg-text/20 transition-colors font-medium"
+          >
+            Quit
+          </button>
+          <a
+            href="https://donate.wikimedia.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs px-2.5 py-1 rounded-full bg-success/15 text-success hover:bg-success/25 transition-colors font-medium hidden sm:inline"
+          >
+            Donate
+          </a>
+        </div>
       </div>
 
       {/* Game info row */}
