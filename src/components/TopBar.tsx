@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { ThemePicker } from './ThemePicker'
 
 interface TopBarProps {
   currentArticle: string
@@ -48,6 +49,7 @@ export default function TopBar({
           <span className="text-xs text-text/60 hidden sm:inline">Daily Wikipedia Racing</span>
         </div>
         <div className="flex items-center gap-2">
+          <ThemePicker />
           <button
             onClick={onGiveUp}
             className="text-xs px-2.5 py-1 rounded-full bg-danger/15 text-danger hover:bg-danger/25 transition-colors font-medium"

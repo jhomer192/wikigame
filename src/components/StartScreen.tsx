@@ -1,4 +1,5 @@
 import type { DailyChallenge } from '../lib/daily'
+import { ThemePicker } from './ThemePicker'
 
 interface StartScreenProps {
   challenge: DailyChallenge
@@ -27,9 +28,12 @@ export default function StartScreen({
       <div className="w-full max-w-md text-center">
         {/* Logo */}
         <div className="mb-6">
-          <h1 className="text-4xl sm:text-5xl font-bold text-text-bright tracking-tight mb-2">
-            WikiGame
-          </h1>
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <h1 className="text-4xl sm:text-5xl font-bold text-text-bright tracking-tight">
+              WikiGame
+            </h1>
+            <ThemePicker />
+          </div>
           <p className="text-text/60 text-sm">
             Navigate Wikipedia from one article to another by clicking links.
           </p>
