@@ -1988,7 +1988,7 @@ export function buildShareText(
   }
   lines.push('')
   if (path && path.length > 0) {
-    // Track visited to detect backtracking (revisiting an article = red)
+    // Censored path -- only show start/end, emojis for middle (no spoilers)
     const visited = new Set<string>()
     for (let i = 0; i < path.length; i++) {
       const isLast = i === path.length - 1
@@ -1996,7 +1996,11 @@ export function buildShareText(
       const isBacktrack = !isFirst && visited.has(path[i])
       visited.add(path[i])
       const emoji = isLast ? '\u{1f7e2}' : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}'
-      lines.push(`${emoji} ${path[i]}`)
+      if (isFirst || isLast) {
+        lines.push(`${emoji} ${path[i]}`)
+      } else {
+        lines.push(emoji)
+      }
     }
   } else {
     lines.push(Array(Math.min(hops, 20)).fill('\u{1f7e9}').join(''))

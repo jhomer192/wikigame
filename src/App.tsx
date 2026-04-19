@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { getDailyChallenge, getRandomChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
+import { getDailyChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
 import { titlesMatch } from './lib/wiki'
 import type { DailyChallenge } from './lib/daily'
 import StartScreen from './components/StartScreen'
@@ -98,16 +98,6 @@ export default function App() {
     })
   }, [])
 
-  const handlePlayAgain = useCallback(() => {
-    const pair = getRandomChallenge()
-    startGame(pair.start, pair.end, false, null)
-  }, [startGame])
-
-  const handlePlayDaily = useCallback(() => {
-    const c = getDailyChallenge()
-    startGame(c.start, c.end, true, c)
-  }, [startGame])
-
   const handleGiveUp = useCallback(() => {
     if (!session) return
     const elapsed = Math.floor((Date.now() - session.startTime) / 1000)
@@ -164,9 +154,6 @@ export default function App() {
           hops={session.path.length - 1}
           timeSeconds={finalTime}
           isDaily={session.isDaily}
-          onPlayAgain={handlePlayAgain}
-          onPlayDaily={handlePlayDaily}
-          dailyCompleted={dailyCompleted}
         />
       </div>
     )

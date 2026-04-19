@@ -9,9 +9,6 @@ interface ResultsScreenProps {
   hops: number
   timeSeconds: number
   isDaily: boolean
-  onPlayAgain: () => void
-  onPlayDaily: () => void
-  dailyCompleted: boolean
 }
 
 function formatTime(seconds: number): string {
@@ -66,9 +63,6 @@ export default function ResultsScreen({
   hops,
   timeSeconds,
   isDaily,
-  onPlayAgain,
-  onPlayDaily,
-  dailyCompleted,
 }: ResultsScreenProps) {
   const [botPath, setBotPath] = useState<string[] | null>(null)
   const [botLoading, setBotLoading] = useState(false)
@@ -228,33 +222,31 @@ export default function ResultsScreen({
           <PathVisualization path={botPath} label="Bot's path" />
         )}
 
+        {/* Copy path button */}
+        <button
+          id="copy-path-btn"
+          onClick={async () => {
+            const pathText = path.join(' → ')
+            try {
+              await navigator.clipboard.writeText(pathText)
+              const btn = document.getElementById('copy-path-btn')
+              if (btn) { btn.textContent = 'Path Copied!'; setTimeout(() => { btn.textContent = 'Copy My Path' }, 2000) }
+            } catch { /* */ }
+          }}
+          className="w-full py-2.5 rounded-xl bg-bg-card border border-border text-text font-medium hover:bg-bg-hover transition-colors text-sm mb-4"
+        >
+          Copy My Path
+        </button>
+
         {/* Action buttons */}
         <div className="space-y-3">
-          {isDaily && (
-            <button
-              id="share-btn"
-              onClick={handleShare}
-              className="w-full py-3 rounded-xl bg-accent text-white font-semibold hover:bg-accent-dim transition-colors"
-            >
-              Share Results
-            </button>
-          )}
-
           <button
-            onClick={onPlayAgain}
-            className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:bg-bg-hover transition-colors"
+            id="share-btn"
+            onClick={handleShare}
+            className="w-full py-3 rounded-xl bg-accent text-white font-semibold hover:bg-accent-dim transition-colors"
           >
-            Play Random
+            Share Results
           </button>
-
-          {!isDaily && !dailyCompleted && (
-            <button
-              onClick={onPlayDaily}
-              className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:bg-bg-hover transition-colors"
-            >
-              Play Today's Challenge
-            </button>
-          )}
         </div>
 
         {/* Wikipedia credit */}
