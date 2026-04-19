@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { getDailyChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
 import { titlesMatch } from './lib/wiki'
 import type { DailyChallenge } from './lib/daily'
@@ -20,13 +20,40 @@ interface GameSession {
   challenge: DailyChallenge | null
 }
 
+const SESSION_KEY = 'wikigame-session'
+
+function loadSession(): { gameState: GameState; session: GameSession | null } | null {
+  try {
+    const raw = sessionStorage.getItem(SESSION_KEY)
+    if (raw) return JSON.parse(raw)
+  } catch { /* */ }
+  return null
+}
+
+function persistSession(gameState: GameState, session: GameSession | null) {
+  try {
+    if (gameState === 'playing' && session) {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify({ gameState, session }))
+    } else {
+      sessionStorage.removeItem(SESSION_KEY)
+    }
+  } catch { /* */ }
+}
+
 export default function App() {
-  const [gameState, setGameState] = useState<GameState>('start')
-  const [session, setSession] = useState<GameSession | null>(null)
+  const saved = loadSession()
+  const [gameState, setGameState] = useState<GameState>(saved?.gameState ?? 'start')
+  const [session, setSession] = useState<GameSession | null>(saved?.session ?? null)
   const [finalTime, setFinalTime] = useState(0)
   const dailyChallenge = getDailyChallenge()
   const dailyResult = getSavedResult(todayLocal())
   const dailyCompleted = !!dailyResult?.completed
+
+  // Persist session so path survives page navigation
+  useEffect(() => {
+    persistSession(gameState, session)
+  }, [gameState, session])
+
   const startGame = useCallback((start: string, end: string, isDaily: boolean, challenge: DailyChallenge | null) => {
     const newSession: GameSession = {
       startArticle: start,
@@ -106,11 +133,13 @@ export default function App() {
   }, [session])
 
   const handleQuit = useCallback(() => {
+    sessionStorage.removeItem(SESSION_KEY)
     setSession(null)
     setGameState('start')
   }, [])
 
   const handleBackToStart = useCallback(() => {
+    sessionStorage.removeItem(SESSION_KEY)
     setSession(null)
     setGameState('start')
   }, [])

@@ -85,15 +85,17 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
   }
 
   useEffect(() => {
+    // Scroll to top immediately when navigating to a new article
+    if (containerRef.current) {
+      containerRef.current.scrollTop = 0
+    }
+
     const controller = new AbortController()
 
     fetchArticleHtml(title, controller.signal)
       .then((content) => {
         setHtml(processHtml(content))
         setLoading(false)
-        if (containerRef.current) {
-          containerRef.current.scrollTop = 0
-        }
       })
       .catch((err) => {
         if (!controller.signal.aborted) {

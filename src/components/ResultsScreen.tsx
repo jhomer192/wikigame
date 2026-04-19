@@ -121,7 +121,8 @@ export default function ResultsScreen({
   }
 
   const botHops = botPath ? botPath.length - 1 : null
-  const playerBeatBot = botHops !== null && hops <= botHops
+  const playerBeatBot = botHops !== null && hops < botHops
+  const playerTiedBot = botHops !== null && hops === botHops
 
   const handleShare = async () => {
     if (!challenge) return
@@ -181,6 +182,11 @@ export default function ResultsScreen({
             {playerBeatBot && (
               <div className="text-sm font-bold text-success mt-1">
                 You beat the bot!
+              </div>
+            )}
+            {playerTiedBot && (
+              <div className="text-sm font-bold text-warning mt-1">
+                Tied with the bot!
               </div>
             )}
           </div>
