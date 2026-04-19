@@ -25,7 +25,7 @@ const LAUNCH_DATE = '2026-04-19'
 
 const CHALLENGES: { start: string; end: string; difficulty: 'easy' | 'medium' | 'hard' }[] = [
   // --- Easy (approx 120) ---
-  { start: 'Sheepdog', end: 'Wool', difficulty: 'easy' },
+  { start: 'Bagpipes', end: 'Edinburgh Castle', difficulty: 'easy' },
   { start: 'Mozzarella', end: 'Water buffalo', difficulty: 'easy' },
   { start: 'Wrigley Field', end: 'Chewing gum', difficulty: 'easy' },
   { start: 'London', end: 'England', difficulty: 'easy' },
@@ -1428,7 +1428,7 @@ const CHALLENGES: { start: string; end: string; difficulty: 'easy' | 'medium' | 
   { start: 'Farm', end: 'Agriculture', difficulty: 'easy' },
   { start: 'Tractor', end: 'John Deere', difficulty: 'easy' },
   { start: 'Cow', end: 'Dairy', difficulty: 'easy' },
-  { start: 'Sheep', end: 'Wool', difficulty: 'easy' },
+  { start: 'Origami', end: 'Edo period', difficulty: 'easy' },
   { start: 'Pig', end: 'Bacon', difficulty: 'easy' },
   { start: 'Chicken', end: 'Egg', difficulty: 'easy' },
   { start: 'Turkey (bird)', end: 'Thanksgiving', difficulty: 'easy' },
@@ -1902,7 +1902,7 @@ const CHALLENGES: { start: string; end: string; difficulty: 'easy' | 'medium' | 
   { start: 'Elixir of life', end: 'Qin Shi Huang', difficulty: 'hard' },
   { start: 'Fountain of Youth', end: 'Juan Ponce de León', difficulty: 'hard' },
   { start: 'El Dorado', end: 'Conquistador', difficulty: 'hard' },
-  { start: 'Atlantis', end: 'Plato', difficulty: 'hard' },
+  { start: 'Sonar', end: 'Guglielmo Marconi', difficulty: 'hard' },
 ]
 
 function parseDate(s: string): Date {
