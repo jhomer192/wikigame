@@ -1968,7 +1968,6 @@ export function buildShareText(
   hops: number,
   timeSeconds: number,
   path?: string[],
-  botPath?: string[],
 ): string {
   const time = timeSeconds < 60
     ? `${timeSeconds}s`

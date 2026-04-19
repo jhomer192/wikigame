@@ -125,7 +125,7 @@ export default function ResultsScreen({
 
   const handleShare = async () => {
     if (!challenge) return
-    const text = buildShareText(challenge, hops, timeSeconds, path, botPath ?? undefined)
+    const text = buildShareText(challenge, hops, timeSeconds, path)
     try {
       if (navigator.share) {
         await navigator.share({ text })
