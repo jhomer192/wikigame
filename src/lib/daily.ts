@@ -1988,20 +1988,17 @@ export function buildShareText(
   }
   lines.push('')
   if (path && path.length > 0) {
-    // Censored path -- only show start/end, emojis for middle (no spoilers)
+    // Fully censored path -- just emojis, no article names (no spoilers)
     const visited = new Set<string>()
+    const emojis: string[] = []
     for (let i = 0; i < path.length; i++) {
       const isLast = i === path.length - 1
       const isFirst = i === 0
       const isBacktrack = !isFirst && visited.has(path[i])
       visited.add(path[i])
-      const emoji = isLast ? '\u{1f7e2}' : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}'
-      if (isFirst || isLast) {
-        lines.push(`${emoji} ${path[i]}`)
-      } else {
-        lines.push(emoji)
-      }
+      emojis.push(isLast ? '\u{1f7e2}' : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}')
     }
+    lines.push(emojis.join(''))
   } else {
     lines.push(Array(Math.min(hops, 20)).fill('\u{1f7e9}').join(''))
   }
