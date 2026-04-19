@@ -1978,14 +1978,7 @@ export function buildShareText(
     `${challenge.start} \u2192 ${challenge.end}`,
     `${hops} hops in ${time}`,
   ]
-  if (botPath && botPath.length > 0) {
-    const botHops = botPath.length - 1
-    if (hops <= botHops) {
-      lines.push(`Beat the bot! (Bot: ${botHops} hop${botHops !== 1 ? 's' : ''})`)
-    } else {
-      lines.push(`Bot: ${botHops} hop${botHops !== 1 ? 's' : ''}`)
-    }
-  }
+  // Don't include bot info in share -- it's a hint
   lines.push('')
   if (path && path.length > 0) {
     // Fully censored path -- just emojis, no article names (no spoilers)
