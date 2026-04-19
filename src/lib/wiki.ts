@@ -26,16 +26,22 @@ export async function fetchArticleHtml(title: string, signal?: AbortSignal): Pro
  * Returns null if not a valid article link.
  */
 export function extractArticleTitle(href: string): string | null {
-  // Relative wiki link: ./Title or ../Title or /wiki/Title
+  // Relative wiki link: ./Title
   const relMatch = href.match(/^\.\/([^#?]+)/)
   if (relMatch) {
     return decodeURIComponent(relMatch[1].replace(/_/g, ' '))
   }
 
-  // Absolute wiki link
-  const absMatch = href.match(/(?:en\.wikipedia\.org)?\/wiki\/([^#?]+)/)
+  // Absolute wiki link (with or without protocol)
+  const absMatch = href.match(/(?:\/\/)?(?:en\.)?wikipedia\.org\/wiki\/([^#?]+)/)
   if (absMatch) {
     return decodeURIComponent(absMatch[1].replace(/_/g, ' '))
+  }
+
+  // /wiki/Title (no domain)
+  const wikiMatch = href.match(/^\/wiki\/([^#?]+)/)
+  if (wikiMatch) {
+    return decodeURIComponent(wikiMatch[1].replace(/_/g, ' '))
   }
 
   return null
