@@ -1979,14 +1979,21 @@ export function buildShareText(
     '',
   ]
   if (path && path.length > 0) {
+    // Track visited to detect backtracking (revisiting an article = red)
+    const visited = new Set<string>()
     for (let i = 0; i < path.length; i++) {
       const isLast = i === path.length - 1
-      lines.push(`${isLast ? '\u{1f7e2}' : '\u{1f7e9}'} ${path[i]}`)
+      const isFirst = i === 0
+      const isBacktrack = !isFirst && visited.has(path[i])
+      visited.add(path[i])
+      const emoji = isLast ? '\u{1f7e2}' : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}'
+      lines.push(`${emoji} ${path[i]}`)
     }
   } else {
     lines.push(Array(Math.min(hops, 20)).fill('\u{1f7e9}').join(''))
   }
   lines.push('')
+  lines.push('Play today\u2019s challenge:')
   lines.push('jhomer192.github.io/wikigame')
   return lines.join('\n')
 }

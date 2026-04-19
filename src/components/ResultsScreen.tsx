@@ -90,23 +90,30 @@ export default function ResultsScreen({
         <div className="bg-bg-card rounded-xl p-4 border border-border mb-6">
           <h3 className="text-sm font-semibold text-text-bright mb-3">Your path</h3>
           <div className="space-y-0">
-            {path.map((title, i) => (
-              <div key={i} className="flex items-start gap-2">
-                <div className="flex flex-col items-center">
-                  <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${
-                    i === 0 ? 'bg-accent' : i === path.length - 1 ? 'bg-success' : 'bg-border'
-                  }`} />
-                  {i < path.length - 1 && (
-                    <div className="w-px h-5 bg-border" />
-                  )}
-                </div>
-                <div className={`text-sm pb-1 ${
-                  i === 0 || i === path.length - 1 ? 'text-text-bright font-medium' : 'text-text'
-                }`}>
-                  {title}
-                </div>
-              </div>
-            ))}
+            {(() => {
+              const visited = new Set<string>()
+              return path.map((title, i) => {
+                const isFirst = i === 0
+                const isLast = i === path.length - 1
+                const isBacktrack = !isFirst && visited.has(title)
+                visited.add(title)
+                const dotColor = isFirst ? 'bg-accent' : isLast ? 'bg-success' : isBacktrack ? 'bg-danger' : 'bg-border'
+                const textColor = isBacktrack ? 'text-danger/70' : (isFirst || isLast) ? 'text-text-bright font-medium' : 'text-text'
+                return (
+                  <div key={i} className="flex items-start gap-2">
+                    <div className="flex flex-col items-center">
+                      <div className={`w-2.5 h-2.5 rounded-full mt-1.5 flex-shrink-0 ${dotColor}`} />
+                      {i < path.length - 1 && (
+                        <div className="w-px h-5 bg-border" />
+                      )}
+                    </div>
+                    <div className={`text-sm pb-1 ${textColor}`}>
+                      {title}{isBacktrack ? ' ↩' : ''}
+                    </div>
+                  </div>
+                )
+              })
+            })()}
           </div>
         </div>
 

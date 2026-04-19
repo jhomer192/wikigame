@@ -54,22 +54,29 @@ body {
   box-sizing: border-box;
 }
 
-/* Links -- the core gameplay element */
+/* Links -- the core gameplay element, must be OBVIOUSLY clickable */
 .wiki-content a[data-wiki-href] {
-  color: #60a5fa;
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.15s, color 0.15s;
+  color: #38bdf8;
+  text-decoration: underline;
+  text-decoration-color: #38bdf880;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 2px;
+  transition: all 0.15s;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .wiki-content a[data-wiki-href]:hover {
-  color: #93c5fd;
-  border-bottom-color: #93c5fd;
+  color: #7dd3fc;
+  text-decoration-color: #7dd3fc;
+  background: rgba(56, 189, 248, 0.1);
+  border-radius: 2px;
+  padding: 0 2px;
+  margin: 0 -2px;
 }
 
 .wiki-content a[data-wiki-href]:active {
-  color: #bfdbfe;
+  color: #bae6fd;
 }
 
 /* Headings */
