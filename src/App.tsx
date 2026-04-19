@@ -47,11 +47,6 @@ export default function App() {
     startGame(c.start, c.end, true, c)
   }, [startGame])
 
-  const handleStartRandom = useCallback(() => {
-    const pair = getRandomChallenge()
-    startGame(pair.start, pair.end, false, null)
-  }, [startGame])
-
   const handleNavigate = useCallback((title: string) => {
     setSession(prev => {
       if (!prev) return prev
