@@ -4,7 +4,6 @@ interface StartScreenProps {
   challenge: DailyChallenge
   dailyCompleted: boolean
   onStartDaily: () => void
-  onStartRandom: () => void
 }
 
 function getDifficultyLabel(d: string): { text: string; color: string } {
@@ -20,7 +19,6 @@ export default function StartScreen({
   challenge,
   dailyCompleted,
   onStartDaily,
-  onStartRandom,
 }: StartScreenProps) {
   const diff = getDifficultyLabel(challenge.difficulty)
 
@@ -48,46 +46,27 @@ export default function StartScreen({
             </span>
           </div>
 
-          <div className="flex items-center justify-center gap-3 mb-5">
-            <div className="bg-bg rounded-xl px-4 py-3 flex-1">
-              <div className="text-xs text-text/50 mb-1">From</div>
-              <div className="text-text-bright font-semibold text-sm sm:text-base truncate">
-                {challenge.start}
-              </div>
-            </div>
-            <div className="text-text/30 text-xl">&#x2192;</div>
-            <div className="bg-bg rounded-xl px-4 py-3 flex-1">
-              <div className="text-xs text-text/50 mb-1">To</div>
-              <div className="text-success font-semibold text-sm sm:text-base truncate">
-                {challenge.end}
-              </div>
-            </div>
-          </div>
-
           {dailyCompleted ? (
             <div className="text-sm text-success mb-3">
               &#x2713; Today's challenge completed!
             </div>
           ) : (
-            <button
-              onClick={onStartDaily}
-              className="w-full py-3.5 rounded-xl bg-accent text-white font-semibold text-lg hover:bg-accent-dim transition-colors mb-2"
-            >
-              Play Daily
-            </button>
+            <>
+              <p className="text-text/50 text-sm mb-5">
+                Tap play to reveal today's articles
+              </p>
+              <button
+                onClick={onStartDaily}
+                className="w-full py-3.5 rounded-xl bg-accent text-white font-semibold text-lg hover:bg-accent-dim transition-colors"
+              >
+                Play
+              </button>
+            </>
           )}
         </div>
 
-        {/* Random play */}
-        <button
-          onClick={onStartRandom}
-          className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-medium hover:bg-bg-hover transition-colors"
-        >
-          Play Random
-        </button>
-
         {/* How to play */}
-        <div className="mt-8 text-left bg-bg-card rounded-2xl p-5 border border-border">
+        <div className="mt-6 text-left bg-bg-card rounded-2xl p-5 border border-border">
           <h3 className="text-sm font-semibold text-text-bright mb-3">How to play</h3>
           <ol className="text-sm text-text space-y-2">
             <li className="flex gap-2">

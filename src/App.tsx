@@ -137,7 +137,6 @@ export default function App() {
           challenge={dailyChallenge}
           dailyCompleted={dailyCompleted}
           onStartDaily={handleStartDaily}
-          onStartRandom={handleStartRandom}
         />
       </div>
     )
