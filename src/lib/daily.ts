@@ -1968,6 +1968,7 @@ export function buildShareText(
   hops: number,
   timeSeconds: number,
   path?: string[],
+  botPath?: string[],
 ): string {
   const time = timeSeconds < 60
     ? `${timeSeconds}s`
@@ -1976,8 +1977,16 @@ export function buildShareText(
     `WikiGame #${challenge.challengeNumber}`,
     `${challenge.start} \u2192 ${challenge.end}`,
     `${hops} hops in ${time}`,
-    '',
   ]
+  if (botPath && botPath.length > 0) {
+    const botHops = botPath.length - 1
+    if (hops <= botHops) {
+      lines.push(`Beat the bot! (Bot: ${botHops} hop${botHops !== 1 ? 's' : ''})`)
+    } else {
+      lines.push(`Bot: ${botHops} hop${botHops !== 1 ? 's' : ''}`)
+    }
+  }
+  lines.push('')
   if (path && path.length > 0) {
     // Track visited to detect backtracking (revisiting an article = red)
     const visited = new Set<string>()
