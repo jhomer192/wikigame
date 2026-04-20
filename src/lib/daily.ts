@@ -18,7 +18,13 @@ export interface DailyResult {
   hops: number
   timeSeconds: number
   path: string[]
+  /** True when the player reached the target; false if they gave up. */
   completed: boolean
+  /** True if the player tapped "Give up" — implies completed=false. */
+  gaveUp?: boolean
+  /** Start / end articles, so we can re-render the results screen later. */
+  start?: string
+  end?: string
 }
 
 const LAUNCH_DATE = '2026-04-19'

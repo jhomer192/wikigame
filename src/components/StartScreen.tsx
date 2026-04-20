@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import type { DailyChallenge } from '../lib/daily'
+import type { DailyChallenge, DailyResult } from '../lib/daily'
 import { searchArticles } from '../lib/wiki'
 import { ThemePicker } from './ThemePicker'
 
 interface StartScreenProps {
   challenge: DailyChallenge
-  dailyCompleted: boolean
+  dailyResult: DailyResult | null
   onStartDaily: () => void
   onStartRandom: () => void
   onStartCustom: (start: string, end: string) => Promise<string | null>
+  onViewDailyResult: () => void
   randomLoading?: boolean
 }
 
@@ -133,10 +134,11 @@ function ArticleSearch({ label, value, onChange, placeholder }: ArticleSearchPro
 
 export default function StartScreen({
   challenge,
-  dailyCompleted,
+  dailyResult,
   onStartDaily,
   onStartRandom,
   onStartCustom,
+  onViewDailyResult,
   randomLoading = false,
 }: StartScreenProps) {
   const diff = getDifficultyLabel(challenge.difficulty)
@@ -191,10 +193,30 @@ export default function StartScreen({
             </span>
           </div>
 
-          {dailyCompleted ? (
-            <div className="text-sm text-success mb-3">
-              &#x2713; Today's challenge completed!
-            </div>
+          {dailyResult?.completed ? (
+            <>
+              <div className="text-sm text-success mb-3">
+                &#x2713; Today's challenge completed in {dailyResult.hops} hop{dailyResult.hops === 1 ? '' : 's'}
+              </div>
+              <button
+                onClick={onViewDailyResult}
+                className="w-full py-3 rounded-xl bg-bg border border-border text-text-bright font-semibold hover:border-accent transition-colors"
+              >
+                View result
+              </button>
+            </>
+          ) : dailyResult?.gaveUp ? (
+            <>
+              <div className="text-sm text-warning mb-3">
+                &#x1F3F3;&#xFE0F; You gave up after {dailyResult.hops} hop{dailyResult.hops === 1 ? '' : 's'}
+              </div>
+              <button
+                onClick={onViewDailyResult}
+                className="w-full py-3 rounded-xl bg-bg border border-border text-text-bright font-semibold hover:border-accent transition-colors"
+              >
+                View result
+              </button>
+            </>
           ) : (
             <>
               <p className="text-text/50 text-sm mb-5">

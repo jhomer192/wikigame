@@ -48,7 +48,6 @@ export default function App() {
   const [gaveUp, setGaveUp] = useState(false)
   const dailyChallenge = getDailyChallenge()
   const dailyResult = getSavedResult(todayLocal())
-  const dailyCompleted = !!dailyResult?.completed
 
   // Persist session so path survives page navigation
   useEffect(() => {
@@ -75,6 +74,28 @@ export default function App() {
     const c = getDailyChallenge()
     startGame(c.start, c.end, true, c)
   }, [startGame])
+
+  // Re-open a saved daily result (for completed or gave-up days).
+  const handleReopenDailyResult = useCallback(() => {
+    if (!dailyResult) return
+    const c = dailyChallenge
+    const start = dailyResult.start ?? c.start
+    const end = dailyResult.end ?? c.end
+    const restored: GameSession = {
+      startArticle: start,
+      endArticle: end,
+      currentArticle: dailyResult.path[dailyResult.path.length - 1] ?? start,
+      path: dailyResult.path,
+      history: [],
+      startTime: Date.now() - dailyResult.timeSeconds * 1000,
+      isDaily: true,
+      challenge: c,
+    }
+    setSession(restored)
+    setFinalTime(dailyResult.timeSeconds)
+    setGaveUp(!!dailyResult.gaveUp)
+    setGameState('results')
+  }, [dailyResult, dailyChallenge])
 
   const [randomLoading, setRandomLoading] = useState(false)
   const handleStartRandom = useCallback(async () => {
@@ -125,6 +146,8 @@ export default function App() {
             timeSeconds: elapsed,
             path: newPath,
             completed: true,
+            start: prev.startArticle,
+            end: prev.endArticle,
           })
         }
 
@@ -160,6 +183,23 @@ export default function App() {
     const elapsed = Math.floor((Date.now() - session.startTime) / 1000)
     setFinalTime(elapsed)
     setGaveUp(true)
+
+    // Register daily give-ups too, so the home screen reflects that today
+    // was attempted (and the player can re-open the result).
+    if (session.isDaily && session.challenge) {
+      saveDailyResult({
+        challengeNumber: session.challenge.challengeNumber,
+        date: session.challenge.date,
+        hops: session.path.length - 1,
+        timeSeconds: elapsed,
+        path: session.path,
+        completed: false,
+        gaveUp: true,
+        start: session.startArticle,
+        end: session.endArticle,
+      })
+    }
+
     setGameState('results')
   }, [session])
 
@@ -180,10 +220,11 @@ export default function App() {
       <div className="h-full flex flex-col overflow-y-auto">
         <StartScreen
           challenge={dailyChallenge}
-          dailyCompleted={dailyCompleted}
+          dailyResult={dailyResult}
           onStartDaily={handleStartDaily}
           onStartRandom={handleStartRandom}
           onStartCustom={handleStartCustom}
+          onViewDailyResult={handleReopenDailyResult}
           randomLoading={randomLoading}
         />
       </div>
