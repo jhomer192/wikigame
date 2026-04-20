@@ -76,10 +76,17 @@ export default function App() {
     startGame(c.start, c.end, true, c)
   }, [startGame])
 
-  const handleStartRandom = useCallback(() => {
-    const r = getRandomChallenge()
-    startGame(r.start, r.end, false, null)
-  }, [startGame])
+  const [randomLoading, setRandomLoading] = useState(false)
+  const handleStartRandom = useCallback(async () => {
+    if (randomLoading) return
+    setRandomLoading(true)
+    try {
+      const r = await getRandomChallenge()
+      startGame(r.start, r.end, false, null)
+    } finally {
+      setRandomLoading(false)
+    }
+  }, [startGame, randomLoading])
 
   const handleStartCustom = useCallback(async (start: string, end: string): Promise<string | null> => {
     // Validate both articles exist before starting
@@ -177,6 +184,7 @@ export default function App() {
           onStartDaily={handleStartDaily}
           onStartRandom={handleStartRandom}
           onStartCustom={handleStartCustom}
+          randomLoading={randomLoading}
         />
       </div>
     )
@@ -204,12 +212,15 @@ export default function App() {
           </a>
         </header>
         <ResultsScreen
-          challenge={session.isDaily ? (session.challenge ?? dailyChallenge) : session.challenge}
+          startArticle={session.startArticle}
+          endArticle={session.endArticle}
           path={session.path}
           hops={session.path.length - 1}
           timeSeconds={finalTime}
           isDaily={session.isDaily}
           gaveUp={gaveUp}
+          challengeNumber={session.challenge?.challengeNumber}
+          difficulty={session.challenge?.difficulty}
         />
       </div>
     )

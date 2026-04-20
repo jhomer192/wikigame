@@ -1,15 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import type { DailyChallenge } from '../lib/daily'
 import { buildShareText } from '../lib/daily'
 import { getCachedBotPath, cacheBotPath, solvePath } from '../lib/solver'
 
 interface ResultsScreenProps {
-  challenge: DailyChallenge | null
+  startArticle: string
+  endArticle: string
   path: string[]
   hops: number
   timeSeconds: number
   isDaily: boolean
   gaveUp?: boolean
+  /** Present for daily challenges; undefined for random / custom games. */
+  challengeNumber?: number
+  /** Present when we know the curated difficulty (daily). */
+  difficulty?: 'easy' | 'medium' | 'hard'
 }
 
 function formatTime(seconds: number): string {
@@ -24,6 +28,11 @@ function getDifficultyColor(d: string): string {
     case 'hard': return 'text-danger'
     default: return 'text-text'
   }
+}
+
+/** Stable cache key for non-daily games: uses start|end pair. */
+function pairKey(start: string, end: string): string {
+  return `${start}||${end}`
 }
 
 function PathVisualization({ path, label, incomplete }: { path: string[]; label?: string; incomplete?: boolean }) {
@@ -62,12 +71,15 @@ function PathVisualization({ path, label, incomplete }: { path: string[]; label?
 }
 
 export default function ResultsScreen({
-  challenge,
+  startArticle,
+  endArticle,
   path,
   hops,
   timeSeconds,
   isDaily,
   gaveUp = false,
+  challengeNumber,
+  difficulty,
 }: ResultsScreenProps) {
   const [botPath, setBotPath] = useState<string[] | null>(null)
   const [botLoading, setBotLoading] = useState(false)
@@ -76,16 +88,19 @@ export default function ResultsScreen({
   const [showBot, setShowBot] = useState(false)
   const abortRef = useRef<AbortController | null>(null)
 
+  // Cache key: use challenge number for daily, start|end pair for random/custom
+  const cacheKeyForBot = challengeNumber != null
+    ? challengeNumber
+    : pairKey(startArticle, endArticle)
+
   // On mount, check cache for bot path
   useEffect(() => {
-    if (challenge) {
-      const cached = getCachedBotPath(challenge.challengeNumber)
-      if (cached) {
-        setBotPath(cached)
-        setShowBot(true)
-      }
+    const cached = getCachedBotPath(cacheKeyForBot)
+    if (cached) {
+      setBotPath(cached)
+      setShowBot(true)
     }
-  }, [challenge])
+  }, [cacheKeyForBot])
 
   // Cleanup abort controller on unmount
   useEffect(() => {
@@ -93,7 +108,6 @@ export default function ResultsScreen({
   }, [])
 
   const runBot = async () => {
-    if (!challenge) return
     setShowBot(true)
     setBotLoading(true)
     setBotError(false)
@@ -104,14 +118,14 @@ export default function ResultsScreen({
 
     try {
       const result = await solvePath(
-        challenge.start,
-        challenge.end,
+        startArticle,
+        endArticle,
         (title) => setBotStep(title),
         controller.signal,
       )
       if (result.length > 0) {
         setBotPath(result)
-        cacheBotPath(challenge.challengeNumber, result)
+        cacheBotPath(cacheKeyForBot, result)
       } else {
         setBotError(true)
       }
@@ -130,8 +144,15 @@ export default function ResultsScreen({
   const playerTiedBot = !gaveUp && botHops !== null && hops === botHops
 
   const handleShare = async () => {
-    if (!challenge) return
-    const text = buildShareText(challenge, hops, timeSeconds, path, gaveUp)
+    const text = buildShareText({
+      start: startArticle,
+      end: endArticle,
+      hops,
+      timeSeconds,
+      path,
+      gaveUp,
+      challengeNumber,
+    })
     try {
       if (navigator.share) {
         await navigator.share({ text })
@@ -148,6 +169,13 @@ export default function ResultsScreen({
     }
   }
 
+  // Header label: show challenge number for daily, "Random Challenge" or
+  // "Custom Challenge" otherwise. We don't know custom-vs-random here, but
+  // isDaily=false covers both. Start→End line below makes it explicit.
+  const headerLabel = isDaily && challengeNumber != null
+    ? `WikiGame #${challengeNumber}`
+    : 'Random Challenge'
+
   return (
     <div className="flex-1 overflow-y-auto flex items-start justify-center p-4 pt-8">
       <div className="w-full max-w-md">
@@ -161,19 +189,26 @@ export default function ResultsScreen({
             <p className="text-sm text-text/60 mb-1">
               Target was{' '}
               <span className="text-text-bright font-medium">
-                {challenge?.end ?? path[path.length - 1]}
+                {endArticle}
               </span>
             </p>
           )}
-          {challenge && (
-            <div className="text-sm text-text/60">
-              {isDaily ? `WikiGame #${challenge.challengeNumber}` : 'Random Challenge'}
-              {' \u00B7 '}
-              <span className={getDifficultyColor(challenge.difficulty)}>
-                {challenge.difficulty}
-              </span>
-            </div>
-          )}
+          <div className="text-sm text-text/60">
+            {headerLabel}
+            {difficulty && (
+              <>
+                {' \u00B7 '}
+                <span className={getDifficultyColor(difficulty)}>
+                  {difficulty}
+                </span>
+              </>
+            )}
+          </div>
+          <div className="text-xs text-text/50 mt-1">
+            <span className="font-medium">{startArticle}</span>
+            {' \u2192 '}
+            <span className="font-medium">{endArticle}</span>
+          </div>
         </div>
 
         {/* Stats grid */}
@@ -210,8 +245,8 @@ export default function ResultsScreen({
         {/* Player's path */}
         <PathVisualization path={path} label="Your path" incomplete={gaveUp} />
 
-        {/* Bot path section */}
-        {!showBot && challenge && (
+        {/* Bot path section -- available for all game modes */}
+        {!showBot && (
           <button
             onClick={runBot}
             className="w-full py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:bg-bg-hover transition-colors mb-4"

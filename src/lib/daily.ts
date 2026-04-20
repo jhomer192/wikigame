@@ -1932,10 +1932,59 @@ export function getDailyChallenge(date?: string): DailyChallenge {
   }
 }
 
-/** Get a random challenge pair (for "Play Again" mode). */
-export function getRandomChallenge(): { start: string; end: string; difficulty: 'easy' | 'medium' | 'hard' } {
+const META_PREFIXES = [
+  'Category:', 'File:', 'Portal:', 'Template:', 'Help:',
+  'Wikipedia:', 'Draft:', 'Module:', 'MediaWiki:', 'Book:',
+  'TimedText:', 'User:', 'User talk:', 'Talk:', 'Special:',
+]
+const META_TITLE_PATTERNS: RegExp[] = [
+  /^List of /i, /^Lists of /i, /^Outline of /i,
+  /^Index of /i, /^Glossary of /i, / \(disambiguation\)$/i,
+]
+
+function isUnplayableTitle(title: string): boolean {
+  if (META_PREFIXES.some((p) => title.startsWith(p))) return true
+  if (META_TITLE_PATTERNS.some((re) => re.test(title))) return true
+  // Year-only titles are uninteresting and brittle ("2012", "1987 in music")
+  if (/^\d{3,4}(\s|$)/.test(title)) return true
+  return false
+}
+
+/**
+ * Fetch two truly-random Wikipedia articles to use as a challenge pair.
+ *
+ * Uses MediaWiki's `list=random` to sample from article namespace, filters out
+ * meta/list/year pages, and also requires a minimum page size so we don't get
+ * a trivial stub that has <5 outgoing links.
+ *
+ * Falls back to the curated CHALLENGES pool if the API is unavailable.
+ */
+export async function getRandomChallenge(): Promise<{ start: string; end: string }> {
+  try {
+    // generator=random + prop=info gives us page lengths in one round trip.
+    // Ask for more than we need so we can filter aggressively.
+    const url = 'https://en.wikipedia.org/w/api.php?'
+      + 'action=query&generator=random&grnnamespace=0&grnlimit=20'
+      + '&grnfilterredir=nonredirects&prop=info&format=json&origin=*'
+    const res = await fetch(url)
+    if (!res.ok) throw new Error('random fetch failed')
+    const data = await res.json()
+    const pages = Object.values(data?.query?.pages ?? {}) as { title: string; length?: number }[]
+    // Shuffle to avoid API ordering bias, filter, and pick two distinct.
+    const shuffled = pages.slice().sort(() => Math.random() - 0.5)
+    const playable = shuffled.filter(
+      (p) => p.title && !isUnplayableTitle(p.title) && (p.length ?? 0) >= 2000,
+    )
+    if (playable.length >= 2) {
+      return { start: playable[0].title, end: playable[1].title }
+    }
+  } catch {
+    // network error — fall through
+  }
+  // Fallback: curated pool
   const idx = Math.floor(Math.random() * CHALLENGES.length)
-  return CHALLENGES[idx]
+  const c = CHALLENGES[idx]
+  return { start: c.start, end: c.end }
 }
 
 // ---- localStorage persistence ----
@@ -1963,19 +2012,28 @@ export function saveDailyResult(result: DailyResult): void {
   }
 }
 
-export function buildShareText(
-  challenge: DailyChallenge,
-  hops: number,
-  timeSeconds: number,
-  path?: string[],
-  gaveUp?: boolean,
-): string {
+export interface ShareInput {
+  start: string
+  end: string
+  hops: number
+  timeSeconds: number
+  path?: string[]
+  gaveUp?: boolean
+  /** Daily games include this; random/custom games omit it. */
+  challengeNumber?: number
+}
+
+export function buildShareText(input: ShareInput): string {
+  const { start, end, hops, timeSeconds, path, gaveUp, challengeNumber } = input
   const time = timeSeconds < 60
     ? `${timeSeconds}s`
     : `${Math.floor(timeSeconds / 60)}m${Math.floor(timeSeconds % 60)}s`
-  const lines = [
-    `WikiGame #${challenge.challengeNumber}`,
-    `${challenge.start} \u2192 ${challenge.end}`,
+  const header = challengeNumber != null
+    ? `WikiGame #${challengeNumber}`
+    : 'WikiGame (Random)'
+  const lines: string[] = [
+    header,
+    `${start} \u2192 ${end}`,
     gaveUp
       ? `Gave up after ${hops} hop${hops === 1 ? '' : 's'} in ${time}`
       : `${hops} hops in ${time}`,
@@ -2001,7 +2059,9 @@ export function buildShareText(
     lines.push(Array(Math.min(hops, 20)).fill('\u{1f7e9}').join(''))
   }
   lines.push('')
-  lines.push('Play today\u2019s challenge:')
+  lines.push(challengeNumber != null
+    ? 'Play today\u2019s challenge:'
+    : 'Try your own:')
   lines.push('jhomer192.github.io/wikigame')
   return lines.join('\n')
 }

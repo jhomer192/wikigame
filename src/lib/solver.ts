@@ -200,14 +200,15 @@ export async function* solve(
   yield { type: 'stuck', reason: `Hit max hop limit of ${MAX_HOPS}.` }
 }
 
-// Cache key for localStorage
-function cacheKey(challengeNumber: number): string {
-  return `wikigame-bot-path-${challengeNumber}`
+// Cache key for localStorage. Accepts a challenge number (daily) or any string
+// identifier (e.g. start||end pair for random/custom games).
+function cacheKey(id: number | string): string {
+  return `wikigame-bot-path-${id}`
 }
 
-export function getCachedBotPath(challengeNumber: number): string[] | null {
+export function getCachedBotPath(id: number | string): string[] | null {
   try {
-    const raw = localStorage.getItem(cacheKey(challengeNumber))
+    const raw = localStorage.getItem(cacheKey(id))
     if (!raw) return null
     const parsed = JSON.parse(raw)
     if (Array.isArray(parsed) && parsed.length > 0) return parsed
@@ -217,9 +218,9 @@ export function getCachedBotPath(challengeNumber: number): string[] | null {
   }
 }
 
-export function cacheBotPath(challengeNumber: number, path: string[]): void {
+export function cacheBotPath(id: number | string, path: string[]): void {
   try {
-    localStorage.setItem(cacheKey(challengeNumber), JSON.stringify(path))
+    localStorage.setItem(cacheKey(id), JSON.stringify(path))
   } catch {
     // localStorage full or unavailable
   }

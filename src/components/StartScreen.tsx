@@ -9,6 +9,7 @@ interface StartScreenProps {
   onStartDaily: () => void
   onStartRandom: () => void
   onStartCustom: (start: string, end: string) => Promise<string | null>
+  randomLoading?: boolean
 }
 
 function getDifficultyLabel(d: string): { text: string; color: string } {
@@ -136,6 +137,7 @@ export default function StartScreen({
   onStartDaily,
   onStartRandom,
   onStartCustom,
+  randomLoading = false,
 }: StartScreenProps) {
   const diff = getDifficultyLabel(challenge.difficulty)
   const [customOpen, setCustomOpen] = useState(false)
@@ -212,9 +214,10 @@ export default function StartScreen({
         <div className="grid grid-cols-2 gap-2 mb-2">
           <button
             onClick={onStartRandom}
-            className="py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:border-accent transition-colors"
+            disabled={randomLoading}
+            className="py-3 rounded-xl bg-bg-card border border-border text-text-bright font-semibold hover:border-accent transition-colors disabled:opacity-60 disabled:cursor-wait"
           >
-            &#x1f3b2; Random
+            {randomLoading ? 'Finding…' : '\u{1f3b2} Random'}
           </button>
           <button
             onClick={() => {
