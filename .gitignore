@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Local scratch dir for bots / ad-hoc analysis
+.tmp/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
