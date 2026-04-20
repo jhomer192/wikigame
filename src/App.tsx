@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react'
-import { getDailyChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
-import { titlesMatch } from './lib/wiki'
+import { getDailyChallenge, getRandomChallenge, getSavedResult, saveDailyResult, todayLocal } from './lib/daily'
+import { articleExists, titlesMatch } from './lib/wiki'
 import type { DailyChallenge } from './lib/daily'
 import StartScreen from './components/StartScreen'
 import TopBar from './components/TopBar'
@@ -74,6 +74,27 @@ export default function App() {
   const handleStartDaily = useCallback(() => {
     const c = getDailyChallenge()
     startGame(c.start, c.end, true, c)
+  }, [startGame])
+
+  const handleStartRandom = useCallback(() => {
+    const r = getRandomChallenge()
+    startGame(r.start, r.end, false, null)
+  }, [startGame])
+
+  const handleStartCustom = useCallback(async (start: string, end: string): Promise<string | null> => {
+    // Validate both articles exist before starting
+    try {
+      const [startOk, endOk] = await Promise.all([
+        articleExists(start),
+        articleExists(end),
+      ])
+      if (!startOk) return `Couldn't find article "${start}".`
+      if (!endOk) return `Couldn't find article "${end}".`
+    } catch {
+      return 'Network error while validating articles.'
+    }
+    startGame(start, end, false, null)
+    return null
   }, [startGame])
 
   const handleNavigate = useCallback((title: string) => {
@@ -154,6 +175,8 @@ export default function App() {
           challenge={dailyChallenge}
           dailyCompleted={dailyCompleted}
           onStartDaily={handleStartDaily}
+          onStartRandom={handleStartRandom}
+          onStartCustom={handleStartCustom}
         />
       </div>
     )
@@ -200,6 +223,7 @@ export default function App() {
         <TopBar
           currentArticle={session.currentArticle}
           targetArticle={session.endArticle}
+          path={session.path}
           hops={session.path.length - 1}
           startTime={session.startTime}
           gameOver={gameOver}

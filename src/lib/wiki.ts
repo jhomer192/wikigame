@@ -74,3 +74,27 @@ export function normalizeTitle(title: string): string {
 export function titlesMatch(a: string, b: string): boolean {
   return normalizeTitle(a) === normalizeTitle(b)
 }
+
+/**
+ * Wikipedia OpenSearch autocomplete. Returns article titles matching the query.
+ * Meta/namespaced pages are filtered out so only real articles appear.
+ */
+export async function searchArticles(query: string, signal?: AbortSignal): Promise<string[]> {
+  const q = query.trim()
+  if (q.length < 2) return []
+  const url = `https://en.wikipedia.org/w/api.php?action=opensearch&search=${encodeURIComponent(q)}&limit=8&namespace=0&format=json&origin=*`
+  const res = await fetch(url, { signal })
+  if (!res.ok) throw new Error(`Search failed: ${res.status}`)
+  const data = await res.json()
+  const titles = Array.isArray(data) && Array.isArray(data[1]) ? (data[1] as string[]) : []
+  return titles.filter((t) => !isMetaTitle(t))
+}
+
+/**
+ * Verify an article exists before starting a custom challenge.
+ */
+export async function articleExists(title: string, signal?: AbortSignal): Promise<boolean> {
+  const encoded = encodeURIComponent(title.replace(/ /g, '_'))
+  const res = await fetch(`${REST_API}/page/summary/${encoded}`, { signal, method: 'HEAD' })
+  return res.ok
+}
