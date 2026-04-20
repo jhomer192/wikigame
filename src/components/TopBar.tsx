@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ThemePicker } from './ThemePicker'
 
 interface TopBarProps {
   currentArticle: string
   targetArticle: string
+  path: string[]
   hops: number
   startTime: number | null
   gameOver: boolean
@@ -22,6 +23,7 @@ function formatTime(seconds: number): string {
 export default function TopBar({
   currentArticle,
   targetArticle,
+  path,
   hops,
   startTime,
   gameOver,
@@ -31,6 +33,14 @@ export default function TopBar({
   onQuit,
 }: TopBarProps) {
   const [elapsed, setElapsed] = useState(0)
+  const trailRef = useRef<HTMLDivElement>(null)
+
+  // Auto-scroll the breadcrumb to the right as new hops are added
+  useEffect(() => {
+    if (trailRef.current) {
+      trailRef.current.scrollLeft = trailRef.current.scrollWidth
+    }
+  }, [path.length])
 
   useEffect(() => {
     if (!startTime || gameOver) return
@@ -115,6 +125,35 @@ export default function TopBar({
         <span className="text-text/60">Target:</span>
         <span className="font-medium text-success">{targetArticle}</span>
       </div>
+
+      {/* Path breadcrumb */}
+      {path.length > 1 && (
+        <div
+          ref={trailRef}
+          className="mt-1.5 flex items-center gap-1 text-xs overflow-x-auto whitespace-nowrap scrollbar-thin"
+        >
+          <span className="text-text/60 flex-shrink-0">Path:</span>
+          {path.map((title, i) => (
+            <span key={i} className="flex items-center gap-1 flex-shrink-0">
+              {i > 0 && (
+                <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="text-text/40">
+                  <path d="M9 18l6-6-6-6" />
+                </svg>
+              )}
+              <span
+                className={
+                  i === path.length - 1
+                    ? 'font-medium text-accent'
+                    : 'text-text/70'
+                }
+                title={title}
+              >
+                {title}
+              </span>
+            </span>
+          ))}
+        </div>
+      )}
     </header>
   )
 }
