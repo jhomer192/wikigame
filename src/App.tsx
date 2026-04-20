@@ -45,6 +45,7 @@ export default function App() {
   const [gameState, setGameState] = useState<GameState>(saved?.gameState ?? 'start')
   const [session, setSession] = useState<GameSession | null>(saved?.session ?? null)
   const [finalTime, setFinalTime] = useState(0)
+  const [gaveUp, setGaveUp] = useState(false)
   const dailyChallenge = getDailyChallenge()
   const dailyResult = getSavedResult(todayLocal())
   const dailyCompleted = !!dailyResult?.completed
@@ -66,6 +67,7 @@ export default function App() {
       challenge,
     }
     setSession(newSession)
+    setGaveUp(false)
     setGameState('playing')
   }, [])
 
@@ -129,6 +131,7 @@ export default function App() {
     if (!session) return
     const elapsed = Math.floor((Date.now() - session.startTime) / 1000)
     setFinalTime(elapsed)
+    setGaveUp(true)
     setGameState('results')
   }, [session])
 
@@ -183,6 +186,7 @@ export default function App() {
           hops={session.path.length - 1}
           timeSeconds={finalTime}
           isDaily={session.isDaily}
+          gaveUp={gaveUp}
         />
       </div>
     )

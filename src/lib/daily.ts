@@ -1968,6 +1968,7 @@ export function buildShareText(
   hops: number,
   timeSeconds: number,
   path?: string[],
+  gaveUp?: boolean,
 ): string {
   const time = timeSeconds < 60
     ? `${timeSeconds}s`
@@ -1975,7 +1976,9 @@ export function buildShareText(
   const lines = [
     `WikiGame #${challenge.challengeNumber}`,
     `${challenge.start} \u2192 ${challenge.end}`,
-    `${hops} hops in ${time}`,
+    gaveUp
+      ? `Gave up after ${hops} hop${hops === 1 ? '' : 's'} in ${time}`
+      : `${hops} hops in ${time}`,
   ]
   // Don't include bot info in share -- it's a hint
   lines.push('')
@@ -1988,7 +1991,10 @@ export function buildShareText(
       const isFirst = i === 0
       const isBacktrack = !isFirst && visited.has(path[i])
       visited.add(path[i])
-      emojis.push(isLast ? '\u{1f7e2}' : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}')
+      // If the player gave up, the final node isn't a victory -- use a white
+      // square to show they stopped without reaching the target.
+      const lastEmoji = gaveUp ? '\u{2b1c}' : '\u{1f7e2}'
+      emojis.push(isLast ? lastEmoji : isBacktrack ? '\u{1f7e5}' : '\u{1f7e9}')
     }
     lines.push(emojis.join(''))
   } else {
