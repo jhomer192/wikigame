@@ -9,6 +9,7 @@ interface ResultsScreenProps {
   hops: number
   timeSeconds: number
   isDaily: boolean
+  gaveUp?: boolean
 }
 
 function formatTime(seconds: number): string {
@@ -25,7 +26,7 @@ function getDifficultyColor(d: string): string {
   }
 }
 
-function PathVisualization({ path, label }: { path: string[]; label?: string }) {
+function PathVisualization({ path, label, incomplete }: { path: string[]; label?: string; incomplete?: boolean }) {
   const visited = new Set<string>()
   return (
     <div className="bg-bg-card rounded-xl p-4 border border-border mb-4">
@@ -36,7 +37,10 @@ function PathVisualization({ path, label }: { path: string[]; label?: string }) 
           const isLast = i === path.length - 1
           const isBacktrack = !isFirst && visited.has(title)
           visited.add(title)
-          const dotColor = isFirst ? 'bg-accent' : isLast ? 'bg-success' : isBacktrack ? 'bg-danger' : 'bg-border'
+          // When incomplete, the last article isn't the target -- render it
+          // as a neutral stopping point rather than a green success dot.
+          const lastColor = incomplete ? 'bg-text/30' : 'bg-success'
+          const dotColor = isFirst ? 'bg-accent' : isLast ? lastColor : isBacktrack ? 'bg-danger' : 'bg-border'
           const textColor = isBacktrack ? 'text-danger/70' : (isFirst || isLast) ? 'text-text-bright font-medium' : 'text-text'
           return (
             <div key={i} className="flex items-start gap-2">
@@ -63,6 +67,7 @@ export default function ResultsScreen({
   hops,
   timeSeconds,
   isDaily,
+  gaveUp = false,
 }: ResultsScreenProps) {
   const [botPath, setBotPath] = useState<string[] | null>(null)
   const [botLoading, setBotLoading] = useState(false)
@@ -121,12 +126,12 @@ export default function ResultsScreen({
   }
 
   const botHops = botPath ? botPath.length - 1 : null
-  const playerBeatBot = botHops !== null && hops < botHops
-  const playerTiedBot = botHops !== null && hops === botHops
+  const playerBeatBot = !gaveUp && botHops !== null && hops < botHops
+  const playerTiedBot = !gaveUp && botHops !== null && hops === botHops
 
   const handleShare = async () => {
     if (!challenge) return
-    const text = buildShareText(challenge, hops, timeSeconds, path)
+    const text = buildShareText(challenge, hops, timeSeconds, path, gaveUp)
     try {
       if (navigator.share) {
         await navigator.share({ text })
@@ -146,10 +151,20 @@ export default function ResultsScreen({
   return (
     <div className="flex-1 overflow-y-auto flex items-start justify-center p-4 pt-8">
       <div className="w-full max-w-md">
-        {/* Victory header */}
+        {/* Result header */}
         <div className="text-center mb-6">
-          <div className="text-4xl mb-2">&#x1F389;</div>
-          <h2 className="text-2xl font-bold text-text-bright mb-1">You made it!</h2>
+          <div className="text-4xl mb-2">{gaveUp ? '\u{1F3F3}\u{FE0F}' : '\u{1F389}'}</div>
+          <h2 className="text-2xl font-bold text-text-bright mb-1">
+            {gaveUp ? 'Gave up' : 'You made it!'}
+          </h2>
+          {gaveUp && (
+            <p className="text-sm text-text/60 mb-1">
+              Target was{' '}
+              <span className="text-text-bright font-medium">
+                {challenge?.end ?? path[path.length - 1]}
+              </span>
+            </p>
+          )}
           {challenge && (
             <div className="text-sm text-text/60">
               {isDaily ? `WikiGame #${challenge.challengeNumber}` : 'Random Challenge'}
@@ -165,7 +180,7 @@ export default function ResultsScreen({
         <div className="grid grid-cols-2 gap-3 mb-6">
           <div className="bg-bg-card rounded-xl p-4 text-center border border-border">
             <div className="text-3xl font-bold font-mono text-text-bright">{hops}</div>
-            <div className="text-xs text-text/60 mt-1">Hops</div>
+            <div className="text-xs text-text/60 mt-1">{gaveUp ? 'Hops taken' : 'Hops'}</div>
           </div>
           <div className="bg-bg-card rounded-xl p-4 text-center border border-border">
             <div className="text-3xl font-bold font-mono text-text-bright">{formatTime(timeSeconds)}</div>
@@ -193,7 +208,7 @@ export default function ResultsScreen({
         )}
 
         {/* Player's path */}
-        <PathVisualization path={path} label="Your path" />
+        <PathVisualization path={path} label="Your path" incomplete={gaveUp} />
 
         {/* Bot path section */}
         {!showBot && challenge && (
