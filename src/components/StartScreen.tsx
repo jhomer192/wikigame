@@ -287,6 +287,9 @@ export default function StartScreen({
         {/* How to play */}
         <div className="mt-6 text-left bg-bg-card rounded-2xl p-5 border border-border">
           <h3 className="text-sm font-semibold text-text-bright mb-3">How to play</h3>
+          <p className="text-sm text-text-bright mb-3 font-medium">
+            Race from a random start article to a target article using only the links inside each Wikipedia page.
+          </p>
           <ol className="text-sm text-text space-y-2">
             <li className="flex gap-2">
               <span className="text-accent font-bold">1.</span>
