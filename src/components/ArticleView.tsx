@@ -57,7 +57,10 @@ function processHtml(html: string): string {
       a.setAttribute('tabindex', '0')
       a.style.cursor = 'pointer'
     } else if (href.startsWith('#')) {
-      // Anchor link within the page: keep as-is
+      // Anchor link within the page: disable so it can't jump to a section
+      a.removeAttribute('href')
+      a.style.cursor = 'default'
+      a.style.pointerEvents = 'none'
     } else {
       // External or meta link: disable
       a.removeAttribute('href')
