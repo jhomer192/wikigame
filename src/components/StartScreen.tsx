@@ -209,6 +209,10 @@ export default function StartScreen({
               <span className="text-accent font-bold">5.</span>
               <span>Stuck? Tap the target article name at any time to preview it for clues.</span>
             </li>
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">6.</span>
+              <span>Hover a link (or long-press on mobile) to peek at where it goes before you commit.</span>
+            </li>
           </ol>
         </div>
 
