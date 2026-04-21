@@ -98,3 +98,28 @@ export async function articleExists(title: string, signal?: AbortSignal): Promis
   const res = await fetch(`${REST_API}/page/summary/${encoded}`, { signal, method: 'HEAD' })
   return res.ok
 }
+
+export interface ArticleSummary {
+  title: string
+  description?: string
+  extract: string
+  thumbnail?: { source: string; width: number; height: number }
+}
+
+/**
+ * Fetch a concise summary of an article (title, description, intro paragraph,
+ * and thumbnail image). Used to preview the target article so players know
+ * what they're searching for without being able to click straight to it.
+ */
+export async function fetchArticleSummary(title: string, signal?: AbortSignal): Promise<ArticleSummary> {
+  const encoded = encodeURIComponent(title.replace(/ /g, '_'))
+  const res = await fetch(`${REST_API}/page/summary/${encoded}`, { signal })
+  if (!res.ok) throw new Error(`Summary failed: ${res.status}`)
+  const data = await res.json()
+  return {
+    title: data.title ?? title,
+    description: data.description,
+    extract: data.extract ?? '',
+    thumbnail: data.thumbnail,
+  }
+}

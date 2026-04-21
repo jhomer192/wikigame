@@ -6,6 +6,7 @@ import StartScreen from './components/StartScreen'
 import TopBar from './components/TopBar'
 import ArticleView from './components/ArticleView'
 import ResultsScreen from './components/ResultsScreen'
+import TargetPreviewModal from './components/TargetPreviewModal'
 
 type GameState = 'start' | 'playing' | 'results'
 
@@ -46,6 +47,7 @@ export default function App() {
   const [session, setSession] = useState<GameSession | null>(saved?.session ?? null)
   const [finalTime, setFinalTime] = useState(0)
   const [gaveUp, setGaveUp] = useState(false)
+  const [showMobilePreview, setShowMobilePreview] = useState(false)
   const dailyChallenge = getDailyChallenge()
   const dailyResult = getSavedResult(todayLocal())
 
@@ -291,14 +293,30 @@ export default function App() {
         />
         {/* Mobile bottom bar */}
         <div className="flex-shrink-0 bg-bg-card border-t border-border px-3 py-2 flex items-center justify-between sm:hidden">
-          <div className="flex items-center gap-1.5 text-xs min-w-0">
+          <button
+            onClick={() => setShowMobilePreview(true)}
+            className="flex items-center gap-1.5 text-xs min-w-0 hover:text-text-bright transition-colors"
+            title="Preview target article"
+          >
             <span className="text-text/50">Target:</span>
-            <span className="text-success font-medium truncate">{session.endArticle}</span>
-          </div>
+            <span className="text-success font-medium truncate underline decoration-dotted underline-offset-2">
+              {session.endArticle}
+            </span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="text-success flex-shrink-0">
+              <circle cx="12" cy="12" r="3" />
+              <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+            </svg>
+          </button>
           <div className="flex items-center gap-2 text-xs flex-shrink-0">
             <span className="font-mono font-bold text-text-bright">{session.path.length - 1} hops</span>
           </div>
         </div>
+        {showMobilePreview && (
+          <TargetPreviewModal
+            title={session.endArticle}
+            onClose={() => setShowMobilePreview(false)}
+          />
+        )}
       </div>
     )
   }

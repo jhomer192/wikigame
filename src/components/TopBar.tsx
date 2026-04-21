@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { ThemePicker } from './ThemePicker'
+import TargetPreviewModal from './TargetPreviewModal'
 
 interface TopBarProps {
   currentArticle: string
@@ -33,6 +34,7 @@ export default function TopBar({
   onQuit,
 }: TopBarProps) {
   const [elapsed, setElapsed] = useState(0)
+  const [showPreview, setShowPreview] = useState(false)
   const trailRef = useRef<HTMLDivElement>(null)
 
   // Auto-scroll the breadcrumb to the right as new hops are added
@@ -123,7 +125,17 @@ export default function TopBar({
       {/* Target reminder */}
       <div className="mt-1.5 flex items-center gap-1.5 text-xs">
         <span className="text-text/60">Target:</span>
-        <span className="font-medium text-success">{targetArticle}</span>
+        <button
+          onClick={() => setShowPreview(true)}
+          className="font-medium text-success hover:opacity-80 underline decoration-dotted underline-offset-2 transition-opacity inline-flex items-center gap-1"
+          title="Preview target article"
+        >
+          {targetArticle}
+          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
+          </svg>
+        </button>
       </div>
 
       {/* Path breadcrumb */}
@@ -153,6 +165,13 @@ export default function TopBar({
             </span>
           ))}
         </div>
+      )}
+
+      {showPreview && (
+        <TargetPreviewModal
+          title={targetArticle}
+          onClose={() => setShowPreview(false)}
+        />
       )}
     </header>
   )
