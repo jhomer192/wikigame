@@ -182,6 +182,36 @@ export default function StartScreen({
           </p>
         </div>
 
+        {/* How to play */}
+        <div className="mb-6 text-left bg-bg-card rounded-2xl p-5 border border-border">
+          <h3 className="text-sm font-semibold text-text-bright mb-3">How to play</h3>
+          <p className="text-sm text-text-bright mb-3 font-medium">
+            Your goal: race from a random start article to a target article using only the links inside each Wikipedia page.
+          </p>
+          <ol className="text-sm text-text space-y-2">
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">1.</span>
+              <span>You start on a Wikipedia article</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">2.</span>
+              <span>Click links within the article to navigate to other articles</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">3.</span>
+              <span>Reach the target article in as few hops as possible</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">4.</span>
+              <span>No searching allowed -- only clicking links!</span>
+            </li>
+            <li className="flex gap-2">
+              <span className="text-accent font-bold">5.</span>
+              <span>Stuck? Tap the target article name at any time to preview it for clues.</span>
+            </li>
+          </ol>
+        </div>
+
         {/* Daily challenge card */}
         <div className="bg-bg-card rounded-2xl p-6 border border-border mb-3">
           <div className="flex items-center justify-center gap-2 mb-4">
@@ -283,36 +313,6 @@ export default function StartScreen({
             </button>
           </div>
         )}
-
-        {/* How to play */}
-        <div className="mt-6 text-left bg-bg-card rounded-2xl p-5 border border-border">
-          <h3 className="text-sm font-semibold text-text-bright mb-3">How to play</h3>
-          <p className="text-sm text-text-bright mb-3 font-medium">
-            Your goal: race from a random start article to a target article using only the links inside each Wikipedia page.
-          </p>
-          <ol className="text-sm text-text space-y-2">
-            <li className="flex gap-2">
-              <span className="text-accent font-bold">1.</span>
-              <span>You start on a Wikipedia article</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-accent font-bold">2.</span>
-              <span>Click links within the article to navigate to other articles</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-accent font-bold">3.</span>
-              <span>Reach the target article in as few hops as possible</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-accent font-bold">4.</span>
-              <span>No searching allowed -- only clicking links!</span>
-            </li>
-            <li className="flex gap-2">
-              <span className="text-accent font-bold">5.</span>
-              <span>Stuck? Tap the target article name at any time to preview it for clues.</span>
-            </li>
-          </ol>
-        </div>
 
         {/* Donate */}
         <div className="mt-6 mb-4">
