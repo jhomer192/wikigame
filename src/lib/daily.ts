@@ -2037,13 +2037,17 @@ export function buildShareText(input: ShareInput): string {
   const header = challengeNumber != null
     ? `WikiGame #${challengeNumber}`
     : 'WikiGame (Random)'
-  const lines: string[] = [
-    header,
-    `${start} \u2192 ${end}`,
+  // For daily challenges, hide start→end in share text -- it spoils the puzzle.
+  // Random/custom games still show it since there's no puzzle to spoil.
+  const lines: string[] = [header]
+  if (challengeNumber == null) {
+    lines.push(`${start} \u2192 ${end}`)
+  }
+  lines.push(
     gaveUp
       ? `Gave up after ${hops} hop${hops === 1 ? '' : 's'} in ${time}`
       : `${hops} hops in ${time}`,
-  ]
+  )
   // Don't include bot info in share -- it's a hint
   lines.push('')
   if (path && path.length > 0) {
