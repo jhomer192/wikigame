@@ -200,6 +200,10 @@ export default function ArticleView({ title, onNavigate, gameOver }: ArticleView
 
   return (
     <div
+      // Keying on title forces React to mount a fresh DOM node for each
+      // article. Without this, React reuses the same <div> across renders
+      // and its scrollTop carries over from the previous article.
+      key={title}
       ref={containerRef}
       className="wiki-content flex-1 overflow-y-auto px-4 py-3 sm:px-6"
       dangerouslySetInnerHTML={{ __html: html }}
