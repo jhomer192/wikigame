@@ -123,3 +123,29 @@ export async function fetchArticleSummary(title: string, signal?: AbortSignal): 
     thumbnail: data.thumbnail,
   }
 }
+
+/**
+ * Fetch the full article HTML but with every link unwrapped (replaced by its
+ * text), so the target preview modal can show rich content -- paragraphs,
+ * tables, infobox -- without giving the player a way to click straight
+ * through to the target.
+ *
+ * The returned string is intended for injection via innerHTML inside a
+ * container styled by the .wiki-content CSS rules.
+ */
+export async function fetchArticleReadOnlyHtml(
+  title: string,
+  signal?: AbortSignal,
+): Promise<string> {
+  const html = await fetchArticleHtml(title, signal)
+  // Parse and unwrap anchors.
+  const doc = new DOMParser().parseFromString(html, 'text/html')
+  // Replace every <a> with its text content -- keeps words, kills navigation.
+  doc.querySelectorAll('a').forEach((a) => {
+    const text = doc.createTextNode(a.textContent ?? '')
+    a.replaceWith(text)
+  })
+  // Strip <script>, <style>, <link> -- same hygiene as in-game article view.
+  doc.querySelectorAll('script, style, link').forEach((el) => el.remove())
+  return doc.body.innerHTML
+}
