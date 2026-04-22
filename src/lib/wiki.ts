@@ -147,5 +147,16 @@ export async function fetchArticleReadOnlyHtml(
   })
   // Strip <script>, <style>, <link> -- same hygiene as in-game article view.
   doc.querySelectorAll('script, style, link').forEach((el) => el.remove())
+  // Wrap wide tables (data tables, not infoboxes) in a horizontal scroll
+  // container so Comparison-of-X tables and List-of-X sortable tables don't
+  // get clipped by the modal's overflow-hidden frame on narrow screens.
+  doc.querySelectorAll('table').forEach((tbl) => {
+    if (tbl.closest('.infobox, .infobox *, .vertical-navbox')) return
+    if (tbl.parentElement?.classList.contains('table-scroll')) return
+    const wrapper = doc.createElement('div')
+    wrapper.className = 'table-scroll'
+    tbl.replaceWith(wrapper)
+    wrapper.appendChild(tbl)
+  })
   return doc.body.innerHTML
 }

@@ -125,6 +125,20 @@ body {
   width: auto !important;
 }
 
+/* Horizontal scroll for wide data tables (Comparison-of-X, List-of-X sortable
+   tables). Without this they get clipped by the modal's overflow-hidden frame
+   on narrow screens. Infoboxes are intentionally not wrapped. */
+.wiki-content .table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  margin: 0.8em 0;
+}
+
+.wiki-content .table-scroll > table {
+  margin: 0;
+}
+
 .wiki-content table th,
 .wiki-content table td {
   border: 1px solid #374151;
