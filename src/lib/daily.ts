@@ -34,7 +34,7 @@ const CHALLENGES: { start: string; end: string; difficulty: 'easy' | 'medium' | 
   { start: '2019–20 SuperLiga season', end: 'Monopoly (game)', difficulty: 'easy' },
   { start: 'Calytrix hislopii', end: 'Scrabble', difficulty: 'easy' },
   { start: 'Jeffrey Breinholt', end: 'Risk (game)', difficulty: 'easy' },
-  { start: 'Shadow Hearts (video game)', end: 'Catan', difficulty: 'easy' },
+  { start: 'Catan', end: 'Shadow Hearts (video game)', difficulty: 'easy' },
   { start: 'James Butler (sprinter)', end: 'Chess', difficulty: 'easy' },
   { start: 'GMERS Medical College and Hospital, Vadnagar', end: 'Go (game)', difficulty: 'easy' },
   { start: 'Pargo Kaling', end: 'Backgammon', difficulty: 'easy' },
