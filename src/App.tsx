@@ -3,12 +3,13 @@ import { getDailyChallenge, getRandomChallenge, getSavedResult, saveDailyResult,
 import { articleExists, titlesMatch } from './lib/wiki'
 import type { DailyChallenge } from './lib/daily'
 import StartScreen from './components/StartScreen'
+import ReadyScreen from './components/ReadyScreen'
 import TopBar from './components/TopBar'
 import ArticleView from './components/ArticleView'
 import ResultsScreen from './components/ResultsScreen'
 import TargetPreviewModal from './components/TargetPreviewModal'
 
-type GameState = 'start' | 'playing' | 'results'
+type GameState = 'start' | 'ready' | 'playing' | 'results'
 
 interface GameSession {
   startArticle: string
@@ -19,6 +20,8 @@ interface GameSession {
   startTime: number
   isDaily: boolean
   challenge: DailyChallenge | null
+  /** Bot's hop count -- set when the player leaves the ready screen. */
+  botHops: number | null
 }
 
 const SESSION_KEY = 'wikigame-session'
@@ -56,6 +59,9 @@ export default function App() {
     persistSession(gameState, session)
   }, [gameState, session])
 
+  // Enter the "ready" state: articles are chosen, bot is solving for par
+  // target, but the clock hasn't started yet. Timer begins when the player
+  // hits Begin on the ready screen.
   const startGame = useCallback((start: string, end: string, isDaily: boolean, challenge: DailyChallenge | null) => {
     const newSession: GameSession = {
       startArticle: start,
@@ -63,12 +69,18 @@ export default function App() {
       currentArticle: start,
       path: [start],
       history: [],
-      startTime: Date.now(),
+      startTime: 0, // set at handleBegin
       isDaily,
       challenge,
+      botHops: null,
     }
     setSession(newSession)
     setGaveUp(false)
+    setGameState('ready')
+  }, [])
+
+  const handleBegin = useCallback((botHops: number | null) => {
+    setSession((prev) => (prev ? { ...prev, startTime: Date.now(), botHops } : prev))
     setGameState('playing')
   }, [])
 
@@ -92,6 +104,7 @@ export default function App() {
       startTime: Date.now() - dailyResult.timeSeconds * 1000,
       isDaily: true,
       challenge: c,
+      botHops: null,
     }
     setSession(restored)
     setFinalTime(dailyResult.timeSeconds)
@@ -228,6 +241,22 @@ export default function App() {
           onStartCustom={handleStartCustom}
           onViewDailyResult={handleReopenDailyResult}
           randomLoading={randomLoading}
+        />
+      </div>
+    )
+  }
+
+  if (gameState === 'ready' && session) {
+    const botCacheKey = session.challenge?.challengeNumber
+      ?? `${session.startArticle}||${session.endArticle}`
+    return (
+      <div className="h-full flex flex-col overflow-y-auto">
+        <ReadyScreen
+          startArticle={session.startArticle}
+          endArticle={session.endArticle}
+          botCacheKey={botCacheKey}
+          onBegin={handleBegin}
+          onCancel={handleQuit}
         />
       </div>
     )

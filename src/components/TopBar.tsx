@@ -122,21 +122,25 @@ export default function TopBar({
         </div>
       </div>
 
-      {/* Target reminder */}
-      <div className="mt-1.5 flex items-center gap-1.5 text-xs">
-        <span className="text-text/60">Target:</span>
-        <button
-          onClick={() => setShowPreview(true)}
-          className="font-medium text-success hover:opacity-80 underline decoration-dotted underline-offset-2 transition-opacity inline-flex items-center gap-1"
-          title="Preview target article"
-        >
-          {targetArticle}
-          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      {/* Target reminder -- oversized, obviously tappable pill so players
+          always know where they're heading and that they can peek. */}
+      <button
+        onClick={() => setShowPreview(true)}
+        className="mt-2 w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-success/10 border border-success/30 hover:bg-success/20 hover:border-success/50 transition-colors text-left"
+        title="Preview target article"
+      >
+        <span className="flex items-center gap-2 min-w-0">
+          <span className="text-xs uppercase tracking-wider text-success/80 font-semibold flex-shrink-0">Target</span>
+          <span className="text-base sm:text-lg font-bold text-success truncate">{targetArticle}</span>
+        </span>
+        <span className="flex items-center gap-1 text-xs text-success/80 font-medium flex-shrink-0">
+          <span className="hidden sm:inline">Peek</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <circle cx="12" cy="12" r="3" />
             <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7z" />
           </svg>
-        </button>
-      </div>
+        </span>
+      </button>
 
       {/* Path breadcrumb */}
       {path.length > 1 && (
