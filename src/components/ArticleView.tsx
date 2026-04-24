@@ -58,6 +58,18 @@ function processHtml(html: string): string {
     '.toc, #toc, #coordinates, .mw-indicators, .shortdescription'
   ).forEach(n => n.remove())
 
+  // Wrap wide tables in a horizontal-scroll container so they don't compress
+  // column text to a single vertical character on narrow mobile screens.
+  // Infoboxes float inline and are excluded (they resize via CSS instead).
+  doc.querySelectorAll('table').forEach((tbl) => {
+    if (tbl.closest('.infobox, .vertical-navbox')) return
+    if (tbl.parentElement?.classList.contains('table-scroll')) return
+    const wrapper = doc.createElement('div')
+    wrapper.className = 'table-scroll'
+    tbl.replaceWith(wrapper)
+    wrapper.appendChild(tbl)
+  })
+
   // Process all links: move href to data-wiki-href
   doc.querySelectorAll('a[href]').forEach(el => {
     const a = el as HTMLAnchorElement

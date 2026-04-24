@@ -137,6 +137,15 @@ body {
 
 .wiki-content .table-scroll > table {
   margin: 0;
+  /* Prevent cells from collapsing to a single character width on mobile */
+  white-space: nowrap;
+}
+
+/* Allow long cell content to wrap naturally — only short words stay on one line */
+.wiki-content .table-scroll td,
+.wiki-content .table-scroll th {
+  white-space: normal;
+  min-width: 60px;
 }
 
 .wiki-content table th,
