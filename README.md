@@ -43,4 +43,4 @@ npm run preview   # serve dist/
 
 React 19, TypeScript, Vite, Tailwind. Article HTML, search, and the random-article picker all come straight from the public MediaWiki API with `origin=*`, so there's no backend and no API key. State lives in `localStorage` and `sessionStorage`. `.github/workflows/deploy.yml` publishes to GitHub Pages on every push to `main`.
 
-The related project is [wikipedia-game-solver](https://github.com/jhomer192/wikipedia-game-solver), which is the solver on its own, with a shortest-path mode and a trace of every scoring decision. More of my projects: [jackhomer.com/projects](https://jackhomer.com/projects/).
+The related project is [wikipedia-game-solver](https://github.com/jhomer192/wikipedia-game-solver), which is the solver on its own, with a shortest-path mode and a trace of every scoring decision. Longer write-up: [jackhomer.com/projects/wikigame](https://jackhomer.com/projects/wikigame/).
