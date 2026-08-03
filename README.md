@@ -8,7 +8,7 @@ WikiGame is a daily Wikipedia racing game. You get two articles and have to walk
 
 ## How a round works
 
-Everyone playing on a given day gets the same pair, picked from a curated pool of 1,823 challenges graded easy, medium or hard. The pool is indexed by the number of days since launch, so it lasts about five years before it wraps.
+Everyone playing on a given day gets the same pair, picked from a curated pool of 1,822 challenges graded easy, medium or hard. The pool is indexed by the number of days since launch, so it lasts about five years before it wraps.
 
 Before the clock starts, a solver bot runs the same pair in the background. Its hop count becomes your par, and it's cached locally so replaying the day doesn't make you wait through it again. If the bot gets stuck, you play the round with no par. The timer only starts when you press Begin, so you can read the target article first.
 

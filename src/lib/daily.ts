@@ -1,7 +1,7 @@
 /**
  * Daily Challenge system -- deterministic challenge-per-day.
  * Challenge #1 starts on 2026-04-19 (launch date).
- * The challenge list wraps every 1,826 entries (5 years).
+ * The challenge list wraps every 1,822 entries (just under 5 years).
  */
 
 export interface DailyChallenge {
@@ -1857,7 +1857,7 @@ const CHALLENGES: { start: string; end: string; difficulty: 'easy' | 'medium' | 
   { start: 'Homer', end: 'Ford Model T', difficulty: 'hard' },
   { start: 'Sun', end: 'Volkswagen Beetle', difficulty: 'hard' },
 
-  // --- Final batch to reach 1,826 ---
+  // --- Final batch, bringing the pool to 1,822 ---
   { start: 'Greeting card', end: 'Boeing 747', difficulty: 'easy' },
   { start: 'Anna Jarvis', end: 'Lockheed SR-71 Blackbird', difficulty: 'easy' },
   { start: 'Necktie', end: 'Concorde', difficulty: 'easy' },
