@@ -242,6 +242,16 @@ export default function App() {
           onViewDailyResult={handleReopenDailyResult}
           randomLoading={randomLoading}
         />
+        <footer className="flex-shrink-0 px-4 pb-6 pt-2 text-center text-xs text-text-dim">
+          Built by{' '}
+          <a href="https://jackhomer.com" className="underline hover:text-text-bright">
+            Jack Homer
+          </a>
+          {' · '}
+          <a href="https://jackhomer.com/projects/wikigame/" className="underline hover:text-text-bright">
+            Project write-up
+          </a>
+        </footer>
       </div>
     )
   }
