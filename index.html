@@ -4,21 +4,36 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/wikigame/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Navigate from one Wikipedia article to another by clicking links. A daily Wikipedia racing game." />
+    <meta name="description" content="Play a daily Wikipedia racing challenge, try a random pair, or choose your own articles. Reach the target using article links and compare your route with a bot." />
     <meta name="author" content="Jack Homer" />
-    <title>WikiGame - Daily Wikipedia Racing · Jack Homer</title>
-    <meta property="og:title" content="WikiGame · Jack Homer" />
-    <meta property="og:description" content="Navigate from one Wikipedia article to another by clicking links. A daily Wikipedia racing game." />
+    <title>WikiGame – Daily Wikipedia Racing · Jack Homer</title>
+    <meta property="og:title" content="WikiGame – Daily Wikipedia Racing · Jack Homer" />
+    <meta property="og:description" content="Play a daily Wikipedia racing challenge, try a random pair, or choose your own articles. Reach the target using article links and compare your route with a bot." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://jackhomer.com/wikigame/" />
     <meta property="og:site_name" content="Jack Homer" />
     <meta name="twitter:card" content="summary" />
-    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "WikiGame", "url": "https://jackhomer.com/wikigame/", "description": "Navigate from one Wikipedia article to another by clicking links. A daily Wikipedia racing game.", "applicationCategory": "GameApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "author": {"@type": "Person", "@id": "https://jackhomer.com/#jack", "name": "Jack Homer", "url": "https://jackhomer.com"}, "isPartOf": {"@type": "WebSite", "@id": "https://jackhomer.com/#site", "name": "Jack Homer", "url": "https://jackhomer.com"}, "sameAs": "https://github.com/jhomer192/wikigame"}</script>
+    <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "WikiGame", "url": "https://jackhomer.com/wikigame/", "description": "Play a daily Wikipedia racing challenge, try a random pair, or choose your own articles. Reach the target using article links and compare your route with a bot.", "applicationCategory": "GameApplication", "operatingSystem": "Any", "browserRequirements": "Requires JavaScript", "isAccessibleForFree": true, "author": {"@type": "Person", "@id": "https://jackhomer.com/#jack", "name": "Jack Homer", "url": "https://jackhomer.com"}, "isPartOf": {"@type": "WebSite", "@id": "https://jackhomer.com/#site", "name": "Jack Homer", "url": "https://jackhomer.com"}, "sameAs": "https://github.com/jhomer192/wikigame"}</script>
     <link rel="canonical" href="https://jackhomer.com/wikigame/" />
     <script>(function(){var s=localStorage.getItem('site-theme');if(s)document.documentElement.setAttribute('data-theme',s)})()</script>
+    <style>
+      .app-guide { box-sizing: border-box; max-width: 52rem; margin: 0 auto; padding: 2rem 1.25rem; color: var(--text, #a9b1d6); background: var(--bg, #16161e); font: 1rem/1.65 system-ui, sans-serif; overflow-wrap: break-word; }
+      .app-guide h2 { margin: 0 0 1rem; font-size: 1.4rem; font-weight: 700; line-height: 1.3; }
+      .app-guide p { margin: 0 0 1rem; }
+      .app-guide a { color: var(--accent, #7aa2f7); text-decoration: underline; text-underline-offset: .2em; }
+      #root:empty { display: none; }
+    </style>
   </head>
   <body>
     <div id="root"></div>
+    <section class="app-guide" aria-labelledby="app-guide-heading">
+      <h2 id="app-guide-heading">Play the daily Wikipedia racing game</h2>
+      <p>WikiGame challenges you to reach one Wikipedia article from another using the links inside each page. Play the daily pair, try a random game, or choose your own starting and target articles.</p>
+      <p>Press Begin to start the timer, then follow article links until you reach the target. Every move counts as a hop, including going back. At the end, review your route, time, and hop count and copy a result to share.</p>
+      <p>A bot attempts the same route to set a par score, but its route is not guaranteed to be shortest. Daily results are saved in this browser. Playing requires JavaScript and access to Wikipedia; if the bot cannot find a route, you can still play without a par.</p>
+      <p>Built by <a href="https://jackhomer.com/">Jack Homer</a>. <a href="https://jackhomer.com/projects/wikigame/">Read the WikiGame project write-up</a>.</p>
+      <noscript><p>Enable JavaScript to use the interactive app.</p></noscript>
+    </section>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
